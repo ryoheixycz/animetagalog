@@ -57,18 +57,6 @@
             background-color: #ffc107;
             color: #333;
         }
-        .header-icon-btn {
-            background-color: #f0f0f0;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 4px;
-        }
-        .header-icon-btn:hover {
-            background-color: #e5e5e5;
-        }
         .dropdown-select {
             -webkit-appearance: none;
             -moz-appearance: none;
@@ -104,37 +92,40 @@
                 padding: 4px 8px;
                 font-size: 11px;
             }
-            .header-icon-btn {
-                width: 36px;
-                height: 36px;
-            }
+        }
+        /* Improved player styles */
+        .plyr--video {
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .plyr__control--overlaid {
+            background: rgba(0,0,0,0.6);
+        }
+        .plyr--full-ui input[type=range] {
+            color: #6766eb;
+        }
+        .plyr__control.plyr__tab-focus,
+        .plyr__control:hover,
+        .plyr__control[aria-expanded=true] {
+            background: #6766eb;
+        }
+        .plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before {
+            background: #6766eb;
         }
     </style>
 </head>
 <body class="bg-gray-100">
-    <!-- Header -->
+    <!-- Simple Header -->
     <div class="bg-white shadow-sm">
         <div class="container mx-auto px-4 py-3">
-            <div class="flex justify-between items-center">
-                <a href="index.html" class="text-2xl font-bold flex items-center text-black">
-                    ANIME TAGALOG<span class="text-blue-600 text-lg">tv</span>
-                </a>
-                <div class="flex space-x-2">
-                    <a href="#" class="header-icon-btn">
-                        <i data-feather="search" class="h-5 w-5"></i>
-                    </a>
-                    <a href="#" class="header-icon-btn">
-                        <i data-feather="download-cloud" class="h-5 w-5"></i>
-                    </a>
-                    <a href="#" class="header-icon-btn">
-                        <i data-feather="user" class="h-5 w-5"></i>
-                    </a>
-                </div>
-            </div>
+            <a href="index.html" class="text-xl font-bold text-black inline-flex items-center">
+                <i data-feather="arrow-left" class="h-5 w-5 mr-2"></i>
+                ANIME TAGALOG
+            </a>
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-4">
+    <div class="container mx-auto px-4 py-4 max-w-4xl">
         <!-- Video Player Section -->
         <div id="videoSection" class="mb-4">
             <!-- Video thumbnail (shown before video loads) -->
@@ -159,39 +150,43 @@
         </div>
 
         <!-- Player Controls -->
-        <div class="bg-white shadow-sm p-2 mb-3">
-            <div class="flex flex-wrap items-center gap-2">
-                <label class="inline-flex items-center">
-                    <input type="checkbox" id="autoplayToggle" class="form-checkbox h-4 w-4">
-                    <span class="text-xs text-gray-700 ml-1">Autoplay</span>
-                </label>
+        <div class="bg-white shadow-sm p-2 mb-3 rounded-sm">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <div class="flex items-center gap-2">
+                    <label class="inline-flex items-center cursor-pointer">
+                        <input type="checkbox" id="autoplayToggle" class="form-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                        <span class="text-xs text-gray-700 ml-1">Autoplay</span>
+                    </label>
+                    
+                    <button id="autoNextBtn" class="control-btn text-xs">
+                        <span class="text-yellow-500 font-bold">Auto</span>
+                        <span class="ml-1">Next</span>
+                    </button>
+                </div>
                 
-                <button id="autoNextBtn" class="control-btn text-xs">
-                    <span class="text-yellow-500 font-bold">Auto</span>
-                    <span class="ml-1">Next</span>
-                </button>
-                
-                <button id="prevEpisodeBtn" class="control-btn text-xs">
-                    <i data-feather="chevron-left" class="h-3 w-3 mr-1"></i> Prev
-                </button>
-                
-                <button id="nextEpisodeBtn" class="control-btn text-xs">
-                    Next <i data-feather="chevron-right" class="h-3 w-3 ml-1"></i>
-                </button>
+                <div class="flex items-center gap-2">
+                    <button id="prevEpisodeBtn" class="control-btn text-xs">
+                        <i data-feather="chevron-left" class="h-3 w-3 mr-1"></i> Prev
+                    </button>
+                    
+                    <button id="nextEpisodeBtn" class="control-btn text-xs">
+                        Next <i data-feather="chevron-right" class="h-3 w-3 ml-1"></i>
+                    </button>
+                </div>
             </div>
         </div>
         
         <!-- Episode Selector -->
-        <div class="bg-white shadow-sm p-3 mb-3">
+        <div class="bg-white shadow-sm p-3 mb-3 rounded-sm">
             <div class="flex items-center justify-between mb-2">
-                <select id="episodeRangeSelect" class="dropdown-select bg-gray-100 border-0 rounded-sm py-2 px-3 text-xs text-gray-700 focus:outline-none mr-2">
+                <select id="episodeRangeSelect" class="dropdown-select bg-gray-100 border-0 rounded-sm py-2 px-3 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 mr-2">
                     <option value="1-100">EPS 1 - 100</option>
                     <option value="101-148">EPS 101 - 148</option>
                 </select>
                 
                 <div class="flex-1 mr-2">
                     <div class="relative">
-                        <input type="text" placeholder="Filter episodes..." id="filterEpisodes" class="w-full bg-gray-100 border-0 rounded-sm py-2 px-3 text-xs text-gray-700 focus:outline-none">
+                        <input type="text" placeholder="Filter episodes..." id="filterEpisodes" class="w-full bg-gray-100 border-0 rounded-sm py-2 px-3 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                         <div class="absolute right-0 top-0 h-full flex items-center pr-2">
                             <button id="viewListBtn" class="text-gray-500 hover:text-gray-700 p-1">
                                 <i data-feather="list" class="h-4 w-4"></i>
@@ -210,11 +205,35 @@
             </div>
         </div>
         
+        <!-- Episode Information -->
+        <div class="bg-white shadow-sm p-3 mb-3 rounded-sm">
+            <h2 id="episodeTitle" class="text-lg font-semibold mb-1">Episode 1</h2>
+            <div class="mb-2 flex items-center text-xs text-gray-500">
+                <span id="episodeDate">October 21, 2023</span>
+                <span class="mx-2">•</span>
+                <button class="flex items-center hover:text-gray-900">
+                    <i data-feather="download" class="h-3 w-3 mr-1"></i> Download
+                </button>
+                <span class="mx-2">•</span>
+                <button class="flex items-center hover:text-gray-900">
+                    <i data-feather="share-2" class="h-3 w-3 mr-1"></i> Share
+                </button>
+            </div>
+            <p id="episodeDescription" class="text-sm text-gray-600 mb-2">
+                Episode description will appear here. This provides information about the current episode's content.
+            </p>
+            
+            <div class="text-xs text-yellow-600 flex items-center mt-2">
+                <i data-feather="alert-circle" class="h-3 w-3 mr-1"></i>
+                If the player doesn't work or keeps buffering, try refreshing the page.
+            </div>
+        </div>
+        
         <!-- Anime Info Section -->
         <div class="bg-white shadow-sm rounded-sm p-4 mb-3">
             <div class="flex flex-col md:flex-row gap-4">
                 <!-- Anime Image -->
-                <div class="w-full md:w-1/4 lg:w-1/6">
+                <div class="w-full md:w-1/4 lg:w-1/5">
                     <img id="animeImage" src="/api/placeholder/300/450" alt="Anime Cover" class="w-full h-auto object-cover rounded-sm">
                 </div>
                 
@@ -222,25 +241,21 @@
                 <div class="flex-1">
                     <h1 id="animeTitle" class="text-xl font-bold mb-2">Anime Title</h1>
                     
-                    <div id="animeInfo" class="grid grid-cols-1 md:grid-cols-2 gap-2 mb-3 text-sm">
+                    <div id="animeInfo" class="grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 mb-3 text-sm">
                         <div class="flex items-center">
-                            <span class="text-gray-500 w-20">Type:</span>
-                            <span id="animeType" class="font-medium">TV</span>
-                        </div>
-                        <div class="flex items-center">
-                            <span class="text-gray-500 w-20">Status:</span>
+                            <span class="text-gray-500 w-16 sm:w-20">Status:</span>
                             <span id="animeStatus" class="font-medium">Ongoing</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="text-gray-500 w-20">Episodes:</span>
+                            <span class="text-gray-500 w-16 sm:w-20">Episodes:</span>
                             <span id="animeEpisodes" class="font-medium">24</span>
                         </div>
                         <div class="flex items-center">
-                            <span class="text-gray-500 w-20">Year:</span>
+                            <span class="text-gray-500 w-16 sm:w-20">Year:</span>
                             <span id="animeYear" class="font-medium">2023</span>
                         </div>
-                        <div class="flex items-center">
-                            <span class="text-gray-500 w-20">Rating:</span>
+                        <div class="flex items-center col-span-2 sm:col-span-1">
+                            <span class="text-gray-500 w-16 sm:w-20">Rating:</span>
                             <span id="animeRating" class="font-medium flex items-center">
                                 <span class="text-yellow-500 mr-1">★</span> 8.7
                             </span>
@@ -264,30 +279,6 @@
                         </p>
                     </div>
                 </div>
-            </div>
-        </div>
-        
-        <!-- Episode Information -->
-        <div class="bg-white shadow-sm p-3 mb-6">
-            <h2 id="episodeTitle" class="text-lg font-semibold mb-1">Episode 1</h2>
-            <div class="mb-2 flex items-center text-xs text-gray-500">
-                <span id="episodeDate">October 21, 2023</span>
-                <span class="mx-2">•</span>
-                <button class="flex items-center hover:text-gray-900">
-                    <i data-feather="download" class="h-3 w-3 mr-1"></i> Download
-                </button>
-                <span class="mx-2">•</span>
-                <button class="flex items-center hover:text-gray-900">
-                    <i data-feather="share-2" class="h-3 w-3 mr-1"></i> Share
-                </button>
-            </div>
-            <p id="episodeDescription" class="text-sm text-gray-600 mb-2">
-                Episode description will appear here. This provides information about the current episode's content.
-            </p>
-            
-            <div class="text-xs text-yellow-600 flex items-center mt-2">
-                <i data-feather="alert-circle" class="h-3 w-3 mr-1"></i>
-                If the player doesn't work or keeps buffering, try refreshing the page.
             </div>
         </div>
     </div>
@@ -348,7 +339,6 @@
                     document.getElementById('animeTitle').textContent = data.title || 'Unknown Title';
                     document.getElementById('animeImage').src = data.poster || '/api/placeholder/300/450';
                     document.getElementById('animeImage').alt = data.title || 'Anime Cover';
-                    document.getElementById('animeType').textContent = data.type || 'TV';
                     document.getElementById('animeStatus').textContent = data.status || 'Unknown';
                     document.getElementById('animeEpisodes').textContent = data.episodes || '0';
                     document.getElementById('animeYear').textContent = data.year || 'Unknown';
