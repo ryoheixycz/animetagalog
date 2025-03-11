@@ -180,8 +180,7 @@
         <div class="bg-white shadow-sm p-3 mb-3 rounded-sm">
             <div class="flex items-center justify-between mb-2">
                 <select id="episodeRangeSelect" class="dropdown-select bg-gray-100 border-0 rounded-sm py-2 px-3 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 mr-2">
-                    <option value="1-100">EPS 1 - 100</option>
-                    <option value="101-148">EPS 101 - 148</option>
+                    <!-- Will be populated dynamically based on total episodes -->
                 </select>
                 
                 <div class="flex-1 mr-2">
@@ -317,9 +316,6 @@
             }
             
             setupEventListeners();
-            
-            // Generate initial episode grid
-            generateEpisodeGrid(1, 100);
         });
 
         // Load anime details
@@ -380,13 +376,68 @@
                     const thumbnail = data.poster || '/api/placeholder/800/450';
                     document.getElementById('videoThumbnail').querySelector('img').src = thumbnail;
                     
+                    // Load episodes and set up range options based on total count
                     loadEpisodes(animeId);
-                    updateEpisodeRangeOptions(data.episodes || 100);
+                    
+                    // Create episode ranges based on actual episode count
+                    const totalEpisodes = parseInt(data.episodes) || 0;
+                    createEpisodeRanges(totalEpisodes);
+                    
+                    // Generate initial episode grid based on current episode
+                    if (totalEpisodes > 0) {
+                        let rangeStart = 1;
+                        // Find the appropriate range for the current episode
+                        if (currentEpisode > 24) {
+                            rangeStart = Math.floor((currentEpisode - 1) / 24) * 24 + 1;
+                        }
+                        const rangeEnd = Math.min(rangeStart + 23, totalEpisodes);
+                        generateEpisodeGrid(rangeStart, rangeEnd);
+                    }
                 })
                 .catch(error => {
                     console.error('Error loading anime details:', error);
                     showError('Failed to load anime details');
                 });
+        }
+
+        // Create episode range options based on total episodes
+        function createEpisodeRanges(totalEpisodes) {
+            const select = document.getElementById('episodeRangeSelect');
+            select.innerHTML = '';
+            
+            if (totalEpisodes <= 0) {
+                const option = document.createElement('option');
+                option.value = '0-0';
+                option.textContent = 'No Episodes';
+                select.appendChild(option);
+                return;
+            }
+            
+            // Create ranges in batches of 24 episodes
+            for (let i = 1; i <= totalEpisodes; i += 24) {
+                const end = Math.min(i + 23, totalEpisodes);
+                const option = document.createElement('option');
+                option.value = `${i}-${end}`;
+                option.textContent = `EPS ${i} - ${end}`;
+                select.appendChild(option);
+            }
+            
+            // Make sure the range containing the current episode is selected
+            setSelectedRange(currentEpisode);
+        }
+
+        // Set the selected range based on episode number
+        function setSelectedRange(episodeNumber) {
+            const select = document.getElementById('episodeRangeSelect');
+            
+            for (let i = 0; i < select.options.length; i++) {
+                const [start, end] = select.options[i].value.split('-').map(Number);
+                
+                if (episodeNumber >= start && episodeNumber <= end) {
+                    select.selectedIndex = i;
+                    break;
+                }
+            }
         }
 
         // Load episodes
@@ -564,11 +615,20 @@
             // Load the video
             loadEpisodeVideo(episodeNumber);
             
-            // Update episode grid (highlight current episode)
-            updateEpisodeGridSelection();
+            // Check if the episode is in the current range
+            const select = document.getElementById('episodeRangeSelect');
+            const [start, end] = select.value.split('-').map(Number);
             
-            // Make sure current episode is visible in range
-            ensureEpisodeInRange(episodeNumber);
+            if (episodeNumber < start || episodeNumber > end) {
+                // Need to update the range
+                setSelectedRange(episodeNumber);
+                const option = select.options[select.selectedIndex];
+                const [newStart, newEnd] = option.value.split('-').map(Number);
+                generateEpisodeGrid(newStart, newEnd);
+            } else {
+                // Just update the active button
+                updateEpisodeGridSelection();
+            }
         }
 
         // Generate episode grid
@@ -576,7 +636,11 @@
             const grid = document.getElementById('episodeGrid');
             grid.innerHTML = '';
             
-            for (let i = start; i <= end; i++) {
+            // Make sure we don't exceed the total episodes
+            const totalEpisodes = currentAnime ? (currentAnime.episodes || 0) : 0;
+            const actualEnd = Math.min(end, totalEpisodes);
+            
+            for (let i = start; i <= actualEnd; i++) {
                 const button = document.createElement('button');
                 button.className = 'episode-btn';
                 button.textContent = i;
@@ -628,43 +692,6 @@
                     btn.style.display = 'none';
                 }
             });
-        }
-
-        // Update episode range options
-        function updateEpisodeRangeOptions(totalEpisodes) {
-            const select = document.getElementById('episodeRangeSelect');
-            select.innerHTML = '';
-            
-            // Create options in batches of 100 (or less for the last batch)
-            for (let i = 1; i <= totalEpisodes; i += 100) {
-                const end = Math.min(i + 99, totalEpisodes);
-                const option = document.createElement('option');
-                option.value = `${i}-${end}`;
-                option.textContent = `EPS ${i} - ${end}`;
-                select.appendChild(option);
-            }
-            
-            // Ensure current episode is in range
-            ensureEpisodeInRange(currentEpisode);
-        }
-
-        // Make sure the episode is in the current range
-        function ensureEpisodeInRange(episodeNumber) {
-            const select = document.getElementById('episodeRangeSelect');
-            
-            // Find the range containing the episode
-            for (let i = 0; i < select.options.length; i++) {
-                const [start, end] = select.options[i].value.split('-').map(Number);
-                
-                if (episodeNumber >= start && episodeNumber <= end) {
-                    // Select this range if not already selected
-                    if (select.selectedIndex !== i) {
-                        select.selectedIndex = i;
-                        generateEpisodeGrid(start, end);
-                    }
-                    break;
-                }
-            }
         }
 
         // Show error message
