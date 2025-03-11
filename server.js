@@ -123,7 +123,16 @@ function writeEpisodes(animeId, episodes) {
 // Get all animes
 app.get('/api/animes', (req, res) => {
     const animes = readAnimes();
-    res.json(animes);
+    // Add defaults for views and type if they don't exist
+    const animesWithDefaults = animes.map(anime => ({
+        ...anime,
+        views: anime.views || Math.floor(Math.random() * 1000),
+        type: anime.type || 'TV',
+        currentEpisode: anime.currentEpisode || anime.episodes || 0,
+        hasSubs: anime.hasSubs !== undefined ? anime.hasSubs : true,
+        hasAudio: anime.hasAudio !== undefined ? anime.hasAudio : true
+    }));
+    res.json(animesWithDefaults);
 });
 
 // Get anime by ID
@@ -136,7 +145,17 @@ app.get('/api/animes/:id', (req, res) => {
         return res.status(404).json({ error: 'Anime not found' });
     }
     
-    res.json(anime);
+    // Add defaults if they don't exist
+    const animeWithDefaults = {
+        ...anime,
+        views: anime.views || Math.floor(Math.random() * 1000),
+        type: anime.type || 'TV',
+        currentEpisode: anime.currentEpisode || anime.episodes || 0,
+        hasSubs: anime.hasSubs !== undefined ? anime.hasSubs : true,
+        hasAudio: anime.hasAudio !== undefined ? anime.hasAudio : true
+    };
+    
+    res.json(animeWithDefaults);
 });
 
 // Create new anime
@@ -149,7 +168,9 @@ app.post('/api/animes', (req, res) => {
     const newAnime = {
         id: newId,
         ...req.body,
-        dateAdded: new Date().toISOString()
+        dateAdded: new Date().toISOString(),
+        views: req.body.views || Math.floor(Math.random() * 1000),
+        type: req.body.type || 'TV'
     };
     
     animes.push(newAnime);
@@ -171,13 +192,15 @@ app.put('/api/animes/:id', (req, res) => {
         return res.status(404).json({ error: 'Anime not found' });
     }
     
-    // Keep the original dateAdded
+    // Keep the original dateAdded and views
     const dateAdded = animes[animeIndex].dateAdded;
+    const views = animes[animeIndex].views || Math.floor(Math.random() * 1000);
     
     animes[animeIndex] = {
         ...req.body,
         id: animeId,
-        dateAdded: dateAdded
+        dateAdded: dateAdded,
+        views: views
     };
     
     if (writeAnimes(animes)) {
@@ -214,16 +237,26 @@ app.delete('/api/animes/:id', (req, res) => {
 
 // Search animes
 app.get('/api/animes/search', (req, res) => {
-    const searchTerm = req.query.q.toLowerCase();
+    const searchTerm = req.query.q?.toLowerCase() || '';
     const animes = readAnimes();
     
     const results = animes.filter(anime => 
-        anime.title.toLowerCase().includes(searchTerm) ||
+        anime.title?.toLowerCase().includes(searchTerm) ||
         (anime.synopsis && anime.synopsis.toLowerCase().includes(searchTerm)) ||
         (anime.genres && anime.genres.some(genre => genre.toLowerCase().includes(searchTerm)))
     );
     
-    res.json(results);
+    // Add defaults for views and type if they don't exist
+    const resultsWithDefaults = results.map(anime => ({
+        ...anime,
+        views: anime.views || Math.floor(Math.random() * 1000),
+        type: anime.type || 'TV',
+        currentEpisode: anime.currentEpisode || anime.episodes || 0,
+        hasSubs: anime.hasSubs !== undefined ? anime.hasSubs : true,
+        hasAudio: anime.hasAudio !== undefined ? anime.hasAudio : true
+    }));
+    
+    res.json(resultsWithDefaults);
 });
 
 // Get all episodes for an anime
@@ -344,6 +377,7 @@ app.post('/api/animes/:id/episodes', (req, res) => {
         const animeIndex = animes.findIndex(a => a.id === animeId);
         if (animeIndex !== -1) {
             animes[animeIndex].episodes = Math.max(episodes.length, animes[animeIndex].episodes || 0);
+            animes[animeIndex].currentEpisode = episodes.length; // Update current episode count
             writeAnimes(animes);
         }
         
@@ -403,6 +437,7 @@ app.post('/api/animes/:id/episodes/upload', upload.single('video'), (req, res) =
         const animeIndex = animes.findIndex(a => a.id === animeId);
         if (animeIndex !== -1) {
             animes[animeIndex].episodes = Math.max(episodes.length, animes[animeIndex].episodes || 0);
+            animes[animeIndex].currentEpisode = episodes.length; // Update current episode count
             writeAnimes(animes);
         }
         
@@ -443,7 +478,25 @@ app.get('/api/animes/:id/related', (req, res) => {
             .slice(0, 5); // Get top 5 related
     }
     
-    res.json(relatedAnime);
+    // Add defaults for views and type if they don't exist
+    const relatedWithDefaults = relatedAnime.map(anime => ({
+        ...anime,
+        views: anime.views || Math.floor(Math.random() * 1000),
+        type: anime.type || 'TV',
+        currentEpisode: anime.currentEpisode || anime.episodes || 0,
+        hasSubs: anime.hasSubs !== undefined ? anime.hasSubs : true,
+        hasAudio: anime.hasAudio !== undefined ? anime.hasAudio : true
+    }));
+    
+    res.json(relatedWithDefaults);
+});
+
+// API endpoint for placeholder images
+app.get('/api/placeholder/:width/:height', (req, res) => {
+    const width = req.params.width;
+    const height = req.params.height;
+    
+    res.redirect(`https://via.placeholder.com/${width}x${height}`);
 });
 
 // Serve HTML files
@@ -457,6 +510,23 @@ app.get('/watch', (req, res) => {
 
 app.get('/admin', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'admin.html'));
+});
+
+// Catch-all route for HTML files
+app.get('/:page.html', (req, res) => {
+    const page = req.params.page;
+    const filePath = path.join(__dirname, 'public', `${page}.html`);
+    
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'));
+    }
+});
+
+// Error handling for 404
+app.use((req, res) => {
+    res.status(404).sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Start the server
