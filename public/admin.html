@@ -6,52 +6,74 @@
     <title>Anime Tagalog - Admin Panel</title>
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+        }
         .tab-active {
             border-bottom: 2px solid #4f46e5;
             color: #4f46e5;
+            font-weight: 500;
+        }
+        .card {
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen">
-    <nav class="bg-indigo-600 text-white shadow-md">
-        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
-            <a href="index.html" class="text-2xl font-bold flex items-center">
+<body class="bg-gray-50 min-h-screen">
+    <nav class="bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-3 flex flex-wrap justify-between items-center">
+            <a href="index.html" class="text-xl font-bold text-indigo-600 flex items-center">
                 <i data-feather="play-circle" class="mr-2"></i>
                 Anime Tagalog
             </a>
             <div class="flex items-center space-x-4">
-                <a href="index.html" class="hover:text-indigo-200 flex items-center">
-                    <i data-feather="home" class="mr-1"></i> Home
+                <a href="index.html" class="hover:text-indigo-600 flex items-center text-sm md:text-base">
+                    <i data-feather="home" class="mr-1 h-4 w-4"></i> Home
                 </a>
-                <a href="admin.html" class="hover:text-indigo-200 flex items-center font-bold">
-                    <i data-feather="settings" class="mr-1"></i> Admin
+                <a href="admin.html" class="text-indigo-600 flex items-center font-medium text-sm md:text-base">
+                    <i data-feather="settings" class="mr-1 h-4 w-4"></i> Admin
                 </a>
             </div>
         </div>
     </nav>
 
     <div class="container mx-auto p-4">
-        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-            <h1 class="text-2xl font-bold text-gray-800 mb-4 flex items-center">
+        <div class="bg-white rounded-lg shadow-sm p-4 md:p-6 mb-6">
+            <h1 class="text-xl md:text-2xl font-bold text-gray-800 mb-4 flex items-center">
                 <i data-feather="settings" class="mr-2"></i> Admin Panel
             </h1>
             
             <div class="border-b border-gray-200 mb-6">
-                <ul class="flex" id="tabContainer">
-                    <li class="mr-1">
-                        <button class="tab-button py-2 px-4 font-medium tab-active" data-tab="anime-list">
+                <ul class="flex flex-wrap -mb-px" id="tabContainer">
+                    <li class="mr-1 mb-1">
+                        <button class="tab-button py-2 px-3 md:px-4 font-medium tab-active" data-tab="anime-list">
                             <i data-feather="list" class="inline h-4 w-4 mr-1"></i> Anime List
                         </button>
                     </li>
-                    <li class="mr-1">
-                        <button class="tab-button py-2 px-4 font-medium" data-tab="add-anime">
+                    <li class="mr-1 mb-1">
+                        <button class="tab-button py-2 px-3 md:px-4 font-medium" data-tab="add-anime">
                             <i data-feather="plus-circle" class="inline h-4 w-4 mr-1"></i> Add Anime
                         </button>
                     </li>
-                    <li class="mr-1">
-                        <button class="tab-button py-2 px-4 font-medium" data-tab="add-episode">
+                    <li class="mr-1 mb-1">
+                        <button class="tab-button py-2 px-3 md:px-4 font-medium" data-tab="add-episode">
                             <i data-feather="film" class="inline h-4 w-4 mr-1"></i> Add Episode
+                        </button>
+                    </li>
+                    <li class="mr-1 mb-1">
+                        <button class="tab-button py-2 px-3 md:px-4 font-medium" data-tab="trending">
+                            <i data-feather="trending-up" class="inline h-4 w-4 mr-1"></i> Trending
+                        </button>
+                    </li>
+                    <li class="mr-1 mb-1">
+                        <button class="tab-button py-2 px-3 md:px-4 font-medium" data-tab="schedule">
+                            <i data-feather="calendar" class="inline h-4 w-4 mr-1"></i> Schedule
                         </button>
                     </li>
                 </ul>
@@ -59,19 +81,18 @@
             
             <!-- Anime List Tab -->
             <div id="anime-list" class="tab-content">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="flex items-center w-1/2">
-                        <div class="relative w-full">
-                            <input type="text" id="searchAnimeInput" placeholder="Search anime..." 
-                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            <i data-feather="search" class="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"></i>
-                        </div>
+                <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-4 space-y-2 md:space-y-0">
+                    <div class="relative w-full md:w-1/2">
+                        <input type="text" id="searchAnimeInput" placeholder="Search anime..." 
+                            class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <i data-feather="search" class="absolute right-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"></i>
                     </div>
                     <div>
                         <select id="sortAnimeSelect" class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
                             <option value="title">Sort by Title</option>
                             <option value="rating">Sort by Rating</option>
                             <option value="date">Sort by Date Added</option>
+                            <option value="views">Sort by Views</option>
                         </select>
                     </div>
                 </div>
@@ -80,18 +101,20 @@
                     <table class="min-w-full bg-white border border-gray-200">
                         <thead>
                             <tr class="bg-gray-100">
-                                <th class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">ID</th>
-                                <th class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Title</th>
-                                <th class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Episodes</th>
-                                <th class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
-                                <th class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Date Added</th>
-                                <th class="px-6 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">ID</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Episodes</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Views</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Date Added</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="animeListBody">
                             <!-- Anime list will be loaded here -->
                             <tr>
-                                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                                <td colspan="8" class="px-6 py-4 text-center text-gray-500">
                                     <div class="flex justify-center items-center">
                                         <i data-feather="loader" class="h-5 w-5 animate-spin mr-2"></i> Loading anime list...
                                     </div>
@@ -159,6 +182,44 @@
                         </div>
                     </div>
                     
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1" for="animeType">
+                                Type
+                            </label>
+                            <select id="animeType" name="type" 
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="TV">TV</option>
+                                <option value="ONA">ONA</option>
+                                <option value="OVA">OVA</option>
+                                <option value="Movie">Movie</option>
+                                <option value="Special">Special</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1" for="animeHasSubs">
+                                Has Subtitles
+                            </label>
+                            <select id="animeHasSubs" name="hasSubs" 
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1" for="animeHasAudio">
+                                Has Tagalog Audio
+                            </label>
+                            <select id="animeHasAudio" name="hasAudio" 
+                                class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="true">Yes</option>
+                                <option value="false">No</option>
+                            </select>
+                        </div>
+                    </div>
+                    
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1" for="animeGenres">
                             Genres (comma separated) <span class="text-red-500">*</span>
@@ -183,6 +244,18 @@
                         <input type="url" id="animePoster" name="poster" 
                             placeholder="https://example.com/image.jpg" 
                             class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            Is Trending?
+                        </label>
+                        <div class="flex items-center">
+                            <input type="checkbox" id="animeTrending" name="isTrending" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                            <label for="animeTrending" class="ml-2 block text-sm text-gray-700">
+                                Add to trending section
+                            </label>
+                        </div>
                     </div>
                     
                     <div class="flex justify-end">
@@ -253,8 +326,10 @@
                             
                             <div>
                                 <div class="flex items-center">
-                                    <input type="checkbox" id="uploadVideo" class="mr-2">
-                                    <label for="uploadVideo" class="text-sm font-medium text-gray-700">Upload video file instead</label>
+                                    <input type="checkbox" id="uploadVideo" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                                    <label for="uploadVideo" class="ml-2 block text-sm text-gray-700">
+                                        Upload video file instead
+                                    </label>
                                 </div>
                                 
                                 <div id="videoUploadContainer" class="mt-2 hidden">
@@ -281,269 +356,849 @@
                     </div>
                 </form>
             </div>
-        </div>
-    </div>
-
-    <footer class="bg-gray-800 text-white py-6 mt-10">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col md:flex-row justify-between items-center">
-                <div class="mb-4 md:mb-0">
-                    <h3 class="text-xl font-bold">Anime Tagalog</h3>
-                    <p class="text-gray-400">Your favorite Tagalog dubbed anime collection</p>
+            
+            <!-- Trending Tab -->
+            <div id="trending" class="tab-content hidden">
+                <h2 class="text-xl font-semibold mb-4">Manage Trending Anime</h2>
+                
+                <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i data-feather="info" class="h-5 w-5 text-yellow-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-yellow-700">
+                                Trending anime will appear in the Trending section. You can manually set anime as trending or let the system automatically determine trending based on views.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-                <div class="flex space-x-4">
-                    <a href="#" class="hover:text-indigo-400"><i data-feather="facebook"></i></a>
-                    <a href="#" class="hover:text-indigo-400"><i data-feather="twitter"></i></a>
-                    <a href="#" class="hover:text-indigo-400"><i data-feather="instagram"></i></a>
+                
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 space-y-2 md:space-y-0">
+                    <div class="flex items-center">
+                        <label class="mr-2 text-sm font-medium text-gray-700">Trending mode:</label>
+                        <select id="trendingMode" class="px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            <option value="auto">Automatic (based on views)</option>
+                            <option value="manual">Manual selection</option>
+                        </select>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <label class="mr-2 text-sm font-medium text-gray-700">Max trending items:</label>
+                        <input type="number" id="maxTrendingItems" min="3" max="20" value="10" 
+                            class="w-16 px-2 py-1 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                        <button id="saveTrendingSettings" class="ml-2 px-3 py-1 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">
+                            Save
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Rank</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Title</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Views</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Rating</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Type</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="trendingAnimeList">
+                            <!-- Trending anime list will be loaded here -->
+                            <tr>
+                                <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                                    <div class="flex justify-center items-center">
+                                        <i data-feather="loader" class="h-5 w-5 animate-spin mr-2"></i> Loading trending anime...
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-700 text-center text-gray-400">
-                <p>&copy; 2025 Anime Tagalog. All rights reserved.</p>
+            
+            <!-- Schedule Tab -->
+            <div id="schedule" class="tab-content hidden">
+                <h2 class="text-xl font-semibold mb-4">Manage Anime Schedule</h2>
+                
+                <div class="bg-blue-50 border-l-4 border-blue-400 p-4 mb-4">
+                    <div class="flex">
+                        <div class="flex-shrink-0">
+                            <i data-feather="calendar" class="h-5 w-5 text-blue-400"></i>
+                        </div>
+                        <div class="ml-3">
+                            <p class="text-sm text-blue-700">
+                                Set release schedules for ongoing anime. This will help viewers know when to expect new episodes.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="mb-4">
+                    <h3 class="text-lg font-medium mb-2">Add New Schedule</h3>
+                    <form id="addScheduleForm" class="bg-gray-50 p-4 rounded-lg">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" for="scheduleAnime">
+                                    Select Anime <span class="text-red-500">*</span>
+                                </label>
+                                <select id="scheduleAnime" name="animeId" required 
+                                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="">-- Select Anime --</option>
+                                    <!-- Anime options will be loaded here -->
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" for="scheduleDay">
+                                    Day of Week <span class="text-red-500">*</span>
+                                </label>
+                                <select id="scheduleDay" name="dayOfWeek" required 
+                                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                    <option value="Monday">Monday</option>
+                                    <option value="Tuesday">Tuesday</option>
+                                    <option value="Wednesday">Wednesday</option>
+                                    <option value="Thursday">Thursday</option>
+                                    <option value="Friday">Friday</option>
+                                    <option value="Saturday">Saturday</option>
+                                    <option value="Sunday">Sunday</option>
+                                </select>
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1" for="scheduleTime">
+                                    Release Time <span class="text-red-500">*</span>
+                                </label>
+                                <input type="time" id="scheduleTime" name="releaseTime" required 
+                                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                        </div>
+                        
+                        <div class="mt-4 flex justify-end">
+                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                                <i data-feather="plus" class="inline h-4 w-4 mr-1"></i> Add Schedule
+                            </button>
+                        </div>
+                    </form>
+                </div>
+                
+                <h3 class="text-lg font-medium mb-2">Current Schedule</h3>
+                <div class="overflow-x-auto">
+                    <table class="min-w-full bg-white border border-gray-200">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Day</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Time</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Anime</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Next Episode</th>
+<th class="px-3 py-3 border-b text-left text-xs font-medium text-gray-500 uppercase">Actions</th>
+</tr>
+</thead>
+<tbody id="scheduleList">
+    <!-- Schedule list will be loaded here -->
+    <tr>
+        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+            <div class="flex justify-center items-center">
+                <i data-feather="loader" class="h-5 w-5 animate-spin mr-2"></i> Loading schedule...
             </div>
-        </div>
-    </footer>
+        </td>
+    </tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
 
-    <script>
-        // Initialize Feather icons
-        document.addEventListener('DOMContentLoaded', function() {
-            feather.replace();
-            setupTabs();
+<footer class="bg-gray-800 text-white py-4 mt-10">
+<div class="container mx-auto px-4 text-center">
+    <p>&copy; 2025 Anime Tagalog. All rights reserved.</p>
+</div>
+</footer>
+
+<script>
+// Initialize Feather icons
+document.addEventListener('DOMContentLoaded', function() {
+    feather.replace();
+    setupTabs();
+    loadAnimeList();
+    loadAnimeOptions();
+    loadTrendingAnime();
+    loadSchedule();
+    setupEventListeners();
+});
+
+// Setup tab navigation
+function setupTabs() {
+    const tabButtons = document.querySelectorAll('.tab-button');
+    const tabContents = document.querySelectorAll('.tab-content');
+    
+    tabButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            // Remove active class from all buttons
+            tabButtons.forEach(btn => btn.classList.remove('tab-active'));
+            
+            // Add active class to clicked button
+            button.classList.add('tab-active');
+            
+            // Hide all tab contents
+            tabContents.forEach(content => content.classList.add('hidden'));
+            
+            // Show selected tab content
+            const tabId = button.dataset.tab;
+            document.getElementById(tabId).classList.remove('hidden');
+        });
+    });
+}
+
+// Load anime list for the table
+function loadAnimeList() {
+    fetch('/api/animes')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(animes => {
+            displayAnimeList(animes);
+        })
+        .catch(error => {
+            console.error('Error loading anime list:', error);
+            const tableBody = document.getElementById('animeListBody');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="px-6 py-4 text-center text-red-500">
+                        Failed to load anime list. Please try again later.
+                    </td>
+                </tr>
+            `;
+        });
+}
+
+// Display anime list in the table
+function displayAnimeList(animes) {
+    const tableBody = document.getElementById('animeListBody');
+    tableBody.innerHTML = '';
+    
+    if (!animes || animes.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="8" class="px-6 py-4 text-center text-gray-500">
+                    No anime added yet.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    animes.forEach(anime => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        // Format date
+        const addedDate = anime.dateAdded ? new Date(anime.dateAdded).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: '2-digit'
+        }) : 'N/A';
+        
+        row.innerHTML = `
+            <td class="px-3 py-4 whitespace-nowrap">${anime.id}</td>
+            <td class="px-3 py-4">
+                <div class="flex items-center">
+                    <img src="${anime.poster || '/api/placeholder/60/90'}" alt="${anime.title}" class="h-10 w-6 object-cover mr-3">
+                    <div class="font-medium text-gray-900">${anime.title}</div>
+                </div>
+            </td>
+            <td class="px-3 py-4 whitespace-nowrap">${anime.episodes || 0}</td>
+            <td class="px-3 py-4 whitespace-nowrap">${parseFloat(anime.rating || 0).toFixed(1)}</td>
+            <td class="px-3 py-4 whitespace-nowrap">${anime.views || 0}</td>
+            <td class="px-3 py-4 whitespace-nowrap">${anime.type || 'TV'}</td>
+            <td class="px-3 py-4 whitespace-nowrap">${addedDate}</td>
+            <td class="px-3 py-4 whitespace-nowrap">
+                <div class="flex space-x-2">
+                    <button class="text-indigo-600 hover:text-indigo-900" onclick="editAnime(${anime.id})">
+                        <i data-feather="edit" class="h-5 w-5"></i>
+                    </button>
+                    <button class="text-red-600 hover:text-red-900" onclick="deleteAnime(${anime.id})">
+                        <i data-feather="trash-2" class="h-5 w-5"></i>
+                    </button>
+                </div>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+    
+    // Reinitialize feather icons for newly added content
+    feather.replace();
+}
+
+// Load anime options for select elements
+function loadAnimeOptions() {
+    fetch('/api/animes')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(animes => {
+            // Sort animes by title
+            animes.sort((a, b) => a.title.localeCompare(b.title));
+            
+            // Add options to episode form select
+            const episodeSelect = document.getElementById('episodeAnime');
+            populateAnimeSelect(episodeSelect, animes);
+            
+            // Add options to schedule form select
+            const scheduleSelect = document.getElementById('scheduleAnime');
+            populateAnimeSelect(scheduleSelect, animes);
+        })
+        .catch(error => {
+            console.error('Error loading anime options:', error);
+            showErrorMessage('Failed to load anime options');
+        });
+}
+
+// Populate anime select elements
+function populateAnimeSelect(selectElement, animes) {
+    if (!selectElement) return;
+    
+    // Clear existing options except the first one
+    while (selectElement.options.length > 1) {
+        selectElement.remove(1);
+    }
+    
+    if (!animes || animes.length === 0) {
+        const option = document.createElement('option');
+        option.textContent = 'No anime available';
+        option.disabled = true;
+        selectElement.appendChild(option);
+        return;
+    }
+    
+    // Add anime options
+    animes.forEach(anime => {
+        const option = document.createElement('option');
+        option.value = anime.id;
+        option.textContent = anime.title;
+        selectElement.appendChild(option);
+    });
+}
+
+// Load trending anime
+function loadTrendingAnime() {
+    fetch('/api/trending')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            displayTrendingAnime(data.animes);
+            
+            // Update trending settings
+            document.getElementById('trendingMode').value = data.mode || 'auto';
+            document.getElementById('maxTrendingItems').value = data.maxItems || 10;
+        })
+        .catch(error => {
+            console.error('Error loading trending anime:', error);
+            const tableBody = document.getElementById('trendingAnimeList');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="7" class="px-6 py-4 text-center text-red-500">
+                        Failed to load trending anime. Please try again later.
+                    </td>
+                </tr>
+            `;
+        });
+}
+
+// Display trending anime
+function displayTrendingAnime(animes) {
+    const tableBody = document.getElementById('trendingAnimeList');
+    tableBody.innerHTML = '';
+    
+    if (!animes || animes.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="7" class="px-6 py-4 text-center text-gray-500">
+                    No trending anime yet.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    animes.forEach((anime, index) => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        row.innerHTML = `
+            <td class="px-3 py-4 whitespace-nowrap">${index + 1}</td>
+            <td class="px-3 py-4">
+                <div class="flex items-center">
+                    <img src="${anime.poster || '/api/placeholder/60/90'}" alt="${anime.title}" class="h-10 w-6 object-cover mr-3">
+                    <div class="font-medium text-gray-900">${anime.title}</div>
+                </div>
+            </td>
+            <td class="px-3 py-4 whitespace-nowrap">${anime.views || 0}</td>
+            <td class="px-3 py-4 whitespace-nowrap">${parseFloat(anime.rating || 0).toFixed(1)}</td>
+            <td class="px-3 py-4 whitespace-nowrap">${anime.type || 'TV'}</td>
+            <td class="px-3 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full ${anime.isTrending ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}">
+                    ${anime.isTrending ? 'Trending' : 'Not Trending'}
+                </span>
+            </td>
+            <td class="px-3 py-4 whitespace-nowrap">
+                <button class="px-2 py-1 text-xs border rounded-md ${anime.isTrending ? 'border-red-300 text-red-600 hover:bg-red-50' : 'border-green-300 text-green-600 hover:bg-green-50'}"
+                    onclick="toggleTrending(${anime.id}, ${!anime.isTrending})">
+                    ${anime.isTrending ? 'Remove from Trending' : 'Add to Trending'}
+                </button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+    
+    // Reinitialize feather icons
+    feather.replace();
+}
+
+// Load schedule
+function loadSchedule() {
+    fetch('/api/schedule')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(schedules => {
+            displaySchedule(schedules);
+        })
+        .catch(error => {
+            console.error('Error loading schedule:', error);
+            const tableBody = document.getElementById('scheduleList');
+            tableBody.innerHTML = `
+                <tr>
+                    <td colspan="6" class="px-6 py-4 text-center text-red-500">
+                        Failed to load schedule. Please try again later.
+                    </td>
+                </tr>
+            `;
+        });
+}
+
+// Display schedule
+function displaySchedule(schedules) {
+    const tableBody = document.getElementById('scheduleList');
+    tableBody.innerHTML = '';
+    
+    if (!schedules || schedules.length === 0) {
+        tableBody.innerHTML = `
+            <tr>
+                <td colspan="6" class="px-6 py-4 text-center text-gray-500">
+                    No scheduled releases yet.
+                </td>
+            </tr>
+        `;
+        return;
+    }
+    
+    // Group schedules by day for better organization
+    const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+    const sortedSchedules = [...schedules].sort((a, b) => {
+        const dayDiff = days.indexOf(a.dayOfWeek) - days.indexOf(b.dayOfWeek);
+        if (dayDiff !== 0) return dayDiff;
+        return a.releaseTime.localeCompare(b.releaseTime);
+    });
+    
+    sortedSchedules.forEach(schedule => {
+        const row = document.createElement('tr');
+        row.className = 'hover:bg-gray-50';
+        
+        // Format time
+        const timeParts = schedule.releaseTime.split(':');
+        const time = new Date();
+        time.setHours(parseInt(timeParts[0]), parseInt(timeParts[1]));
+        const formattedTime = time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+        
+        // Calculate next episode date
+        const today = new Date();
+        const dayIndex = days.indexOf(schedule.dayOfWeek);
+        const todayIndex = today.getDay() === 0 ? 6 : today.getDay() - 1; // Convert to 0 = Monday
+        let daysUntil = dayIndex - todayIndex;
+        if (daysUntil <= 0) daysUntil += 7;
+        
+        const nextEpisodeDate = new Date();
+        nextEpisodeDate.setDate(today.getDate() + daysUntil);
+        const formattedDate = nextEpisodeDate.toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric'
+        });
+        
+        row.innerHTML = `
+            <td class="px-3 py-4 whitespace-nowrap">${schedule.dayOfWeek}</td>
+            <td class="px-3 py-4 whitespace-nowrap">${formattedTime}</td>
+            <td class="px-3 py-4">
+                <div class="flex items-center">
+                    <img src="${schedule.anime?.poster || '/api/placeholder/60/90'}" alt="${schedule.anime?.title}" class="h-10 w-6 object-cover mr-3">
+                    <div class="font-medium text-gray-900">${schedule.anime?.title || 'Unknown Anime'}</div>
+                </div>
+            </td>
+            <td class="px-3 py-4 whitespace-nowrap">
+                <span class="px-2 py-1 text-xs rounded-full ${schedule.anime?.status === 'Ongoing' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                    ${schedule.anime?.status || 'Unknown'}
+                </span>
+            </td>
+            <td class="px-3 py-4 whitespace-nowrap">
+                <span class="font-medium">${formattedDate}</span>
+                <span class="text-xs text-gray-500">(Ep. ${(schedule.anime?.currentEpisode || 0) + 1})</span>
+            </td>
+            <td class="px-3 py-4 whitespace-nowrap">
+                <button class="text-red-600 hover:text-red-900" onclick="deleteSchedule(${schedule.id})">
+                    <i data-feather="trash-2" class="h-5 w-5"></i>
+                </button>
+            </td>
+        `;
+        
+        tableBody.appendChild(row);
+    });
+    
+    // Reinitialize feather icons
+    feather.replace();
+}
+
+// Setup event listeners
+function setupEventListeners() {
+    // Toggle video upload form
+    document.getElementById('uploadVideo').addEventListener('change', function() {
+        const uploadContainer = document.getElementById('videoUploadContainer');
+        if (this.checked) {
+            uploadContainer.classList.remove('hidden');
+        } else {
+            uploadContainer.classList.add('hidden');
+        }
+    });
+    
+    // Search anime in the list
+    document.getElementById('searchAnimeInput').addEventListener('keyup', function() {
+        const searchTerm = this.value.toLowerCase();
+        const rows = document.querySelectorAll('#animeListBody tr');
+        
+        rows.forEach(row => {
+            const titleCell = row.querySelector('td:nth-child(2)');
+            if (!titleCell) return;
+            
+            const title = titleCell.textContent.toLowerCase();
+            if (title.includes(searchTerm)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
+    });
+    
+    // Sort anime list
+    document.getElementById('sortAnimeSelect').addEventListener('change', function() {
+        const sortBy = this.value;
+        fetch('/api/animes')
+            .then(response => response.json())
+            .then(animes => {
+                let sortedAnimes = [...animes];
+                
+                if (sortBy === 'title') {
+                    sortedAnimes.sort((a, b) => a.title.localeCompare(b.title));
+                } else if (sortBy === 'rating') {
+                    sortedAnimes.sort((a, b) => parseFloat(b.rating || 0) - parseFloat(a.rating || 0));
+                } else if (sortBy === 'date') {
+                    sortedAnimes.sort((a, b) => new Date(b.dateAdded || 0) - new Date(a.dateAdded || 0));
+                } else if (sortBy === 'views') {
+                    sortedAnimes.sort((a, b) => (b.views || 0) - (a.views || 0));
+                }
+                
+                displayAnimeList(sortedAnimes);
+            })
+            .catch(error => {
+                console.error('Error sorting anime list:', error);
+            });
+    });
+    
+    // Add anime form submission
+    document.getElementById('addAnimeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Get form data
+        const formData = new FormData(this);
+        const animeData = {
+            title: formData.get('title'),
+            year: parseInt(formData.get('year')),
+            status: formData.get('status'),
+            episodes: parseInt(formData.get('episodes')),
+            rating: parseFloat(formData.get('rating') || 0),
+            genres: formData.get('genres').split(',').map(genre => genre.trim()),
+            synopsis: formData.get('synopsis'),
+            poster: formData.get('poster') || null,
+            type: formData.get('type') || 'TV',
+            hasSubs: formData.get('hasSubs') === 'true',
+            hasAudio: formData.get('hasAudio') === 'true',
+            isTrending: formData.get('isTrending') === 'on',
+            dateAdded: new Date().toISOString()
+        };
+        
+        // Submit anime data
+        fetch('/api/animes', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(animeData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Anime added successfully!');
+            this.reset();
             loadAnimeList();
             loadAnimeOptions();
-            setupEventListeners();
+            loadTrendingAnime();
+            
+            // Switch to anime list tab
+            document.querySelector('[data-tab="anime-list"]').click();
+        })
+        .catch(error => {
+            console.error('Error adding anime:', error);
+            alert('Failed to add anime. Please try again.');
         });
-
-        // Setup tab navigation
-        function setupTabs() {
-            const tabButtons = document.querySelectorAll('.tab-button');
-            const tabContents = document.querySelectorAll('.tab-content');
+    });
+    
+    // Add episode form submission
+    document.getElementById('addEpisodeForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const animeId = formData.get('animeId');
+        const episodeNumber = parseInt(formData.get('episodeNumber'));
+        const uploadVideo = document.getElementById('uploadVideo').checked;
+        
+        if (uploadVideo) {
+            // Handle file upload
+            const videoFile = document.getElementById('videoFile').files[0];
             
-            tabButtons.forEach(button => {
-                button.addEventListener('click', () => {
-                    // Remove active class from all buttons
-                    tabButtons.forEach(btn => btn.classList.remove('tab-active'));
-                    
-                    // Add active class to clicked button
-                    button.classList.add('tab-active');
-                    
-                    // Hide all tab contents
-                    tabContents.forEach(content => content.classList.add('hidden'));
-                    
-                    // Show selected tab content
-                    const tabId = button.dataset.tab;
-                    document.getElementById(tabId).classList.remove('hidden');
-                });
-            });
-        }
-
-        // Load anime list for the table
-        function loadAnimeList() {
-            fetch('/api/animes')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(animes => {
-                    displayAnimeList(animes);
-                })
-                .catch(error => {
-                    console.error('Error loading anime list:', error);
-                    const tableBody = document.getElementById('animeListBody');
-                    tableBody.innerHTML = `
-                        <tr>
-                            <td colspan="6" class="px-6 py-4 text-center text-red-500">
-                                Failed to load anime list. Please try again later.
-                            </td>
-                        </tr>
-                    `;
-                });
-        }
-
-        // Display anime list in the table
-        function displayAnimeList(animes) {
-            const tableBody = document.getElementById('animeListBody');
-            tableBody.innerHTML = '';
-            
-            if (!animes || animes.length === 0) {
-                tableBody.innerHTML = `
-                    <tr>
-                        <td colspan="6" class="px-6 py-4 text-center text-gray-500">
-                            No anime added yet.
-                        </td>
-                    </tr>
-                `;
+            if (!videoFile) {
+                alert('Please select a video file to upload.');
                 return;
             }
             
-            animes.forEach(anime => {
-                const row = document.createElement('tr');
-                row.className = 'hover:bg-gray-50';
-                
-                // Format date
-                const addedDate = anime.dateAdded ? new Date(anime.dateAdded).toLocaleDateString('en-US', {
-                    year: 'numeric',
-                    month: 'short',
-                    day: '2-digit'
-                }) : 'N/A';
-                
-                row.innerHTML = `
-                    <td class="px-6 py-4 whitespace-nowrap">${anime.id}</td>
-                    <td class="px-6 py-4">
-                        <div class="flex items-center">
-                            <img src="${anime.poster || '/api/placeholder/60/90'}" alt="${anime.title}" class="h-10 w-6 object-cover mr-3">
-                            <div class="font-medium text-gray-900">${anime.title}</div>
-                        </div>
-                    </td>
-                    <td class="px-6 py-4 whitespace-nowrap">${anime.episodes || 0}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${parseFloat(anime.rating || 0).toFixed(1)}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">${addedDate}</td>
-                    <td class="px-6 py-4 whitespace-nowrap">
-                        <div class="flex space-x-2">
-                            <button class="text-indigo-600 hover:text-indigo-900" onclick="editAnime(${anime.id})">
-                                <i data-feather="edit" class="h-5 w-5"></i>
-                            </button>
-                            <button class="text-red-600 hover:text-red-900" onclick="deleteAnime(${anime.id})">
-                                <i data-feather="trash-2" class="h-5 w-5"></i>
-                            </button>
-                        </div>
-                    </td>
-                `;
-                
-                tableBody.appendChild(row);
-            });
+            const uploadFormData = new FormData();
+            uploadFormData.append('video', videoFile);
+            uploadFormData.append('episodeNumber', episodeNumber);
+            uploadFormData.append('title', formData.get('title') || '');
+            uploadFormData.append('description', formData.get('description') || '');
             
-            // Reinitialize feather icons for newly added content
-            feather.replace();
-        }
-
-        // Load anime options for the episode form select
-        function loadAnimeOptions() {
-            fetch('/api/animes')
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(animes => {
-                    const select = document.getElementById('episodeAnime');
-                    
-                    // Clear existing options except the first one
-                    while (select.options.length > 1) {
-                        select.remove(1);
-                    }
-                    
-                    if (!animes || animes.length === 0) {
-                        const option = document.createElement('option');
-                        option.textContent = 'No anime available';
-                        option.disabled = true;
-                        select.appendChild(option);
-                        return;
-                    }
-                    
-                    // Sort animes by title
-                    animes.sort((a, b) => a.title.localeCompare(b.title));
-                    
-                    // Add anime options
-                    animes.forEach(anime => {
-                        const option = document.createElement('option');
-                        option.value = anime.id;
-                        option.textContent = anime.title;
-                        select.appendChild(option);
-                    });
-                })
-                .catch(error => {
-                    console.error('Error loading anime options:', error);
-                    const select = document.getElementById('episodeAnime');
-                    
-                    // Clear existing options except the first one
-                    while (select.options.length > 1) {
-                        select.remove(1);
-                    }
-                    
-                    const option = document.createElement('option');
-                    option.textContent = 'Failed to load anime';
-                    option.disabled = true;
-                    select.appendChild(option);
-                });
-        }
-
-        // Setup event listeners
-        function setupEventListeners() {
-            // Toggle video upload form
-            document.getElementById('uploadVideo').addEventListener('change', function() {
-                const uploadContainer = document.getElementById('videoUploadContainer');
-                if (this.checked) {
-                    uploadContainer.classList.remove('hidden');
-                } else {
-                    uploadContainer.classList.add('hidden');
+            fetch(`/api/animes/${animeId}/episodes/upload`, {
+                method: 'POST',
+                body: uploadFormData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
                 }
+                return response.json();
+            })
+            .then(data => {
+                alert('Episode added successfully!');
+                this.reset();
+                document.getElementById('uploadVideo').checked = false;
+                document.getElementById('videoUploadContainer').classList.add('hidden');
+                loadSchedule(); // Refresh schedule to show updated episode count
+            })
+            .catch(error => {
+                console.error('Error uploading episode:', error);
+                alert('Failed to upload episode. Please try again.');
             });
+        } else {
+            // Handle video URLs
+            const episodeData = {
+                episodeNumber: episodeNumber,
+                title: formData.get('title') || '',
+                description: formData.get('description') || '',
+                sources: {
+                    server1: formData.get('server1'),
+                    server2: formData.get('server2') || null
+                }
+            };
             
-            // Search anime in the list
-            document.getElementById('searchAnimeInput').addEventListener('keyup', function() {
-                const searchTerm = this.value.toLowerCase();
-                const rows = document.querySelectorAll('#animeListBody tr');
-                
-                rows.forEach(row => {
-                    const titleCell = row.querySelector('td:nth-child(2)');
-                    if (!titleCell) return;
-                    
-                    const title = titleCell.textContent.toLowerCase();
-                    if (title.includes(searchTerm)) {
-                        row.style.display = '';
-                    } else {
-                        row.style.display = 'none';
-                    }
-                });
+            fetch(`/api/animes/${animeId}/episodes`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(episodeData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                alert('Episode added successfully!');
+                this.reset();
+                loadSchedule(); // Refresh schedule to show updated episode count
+            })
+            .catch(error => {
+                console.error('Error adding episode:', error);
+                alert('Failed to add episode. Please try again.');
             });
+        }
+    });
+    
+    // Save trending settings
+    document.getElementById('saveTrendingSettings').addEventListener('click', function() {
+        const mode = document.getElementById('trendingMode').value;
+        const maxItems = parseInt(document.getElementById('maxTrendingItems').value);
+        
+        fetch('/api/trending/settings', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ mode, maxItems })
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Trending settings saved successfully!');
+            loadTrendingAnime();
+        })
+        .catch(error => {
+            console.error('Error saving trending settings:', error);
+            alert('Failed to save trending settings. Please try again.');
+        });
+    });
+    
+    // Add schedule form submission
+    document.getElementById('addScheduleForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(this);
+        const scheduleData = {
+            animeId: parseInt(formData.get('animeId')),
+            dayOfWeek: formData.get('dayOfWeek'),
+            releaseTime: formData.get('releaseTime')
+        };
+        
+        fetch('/api/schedule', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(scheduleData)
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Schedule added successfully!');
+            this.reset();
+            loadSchedule();
+        })
+        .catch(error => {
+            console.error('Error adding schedule:', error);
+            alert('Failed to add schedule. Please try again.');
+        });
+    });
+}
+
+// Edit anime function
+function editAnime(animeId) {
+    fetch(`/api/animes/${animeId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(anime => {
+            // Switch to add anime tab
+            document.querySelector('[data-tab="add-anime"]').click();
             
-            // Sort anime list
-            document.getElementById('sortAnimeSelect').addEventListener('change', function() {
-                const sortBy = this.value;
-                fetch('/api/animes')
-                    .then(response => response.json())
-                    .then(animes => {
-                        let sortedAnimes = [...animes];
-                        
-                        if (sortBy === 'title') {
-                            sortedAnimes.sort((a, b) => a.title.localeCompare(b.title));
-                        } else if (sortBy === 'rating') {
-                            sortedAnimes.sort((a, b) => parseFloat(b.rating || 0) - parseFloat(a.rating || 0));
-                        } else if (sortBy === 'date') {
-                            sortedAnimes.sort((a, b) => new Date(b.dateAdded || 0) - new Date(a.dateAdded || 0));
-                        }
-                        
-                        displayAnimeList(sortedAnimes);
-                    })
-                    .catch(error => {
-                        console.error('Error sorting anime list:', error);
-                    });
-            });
+            // Fill form with anime data
+            document.getElementById('animeTitle').value = anime.title || '';
+            document.getElementById('animeYear').value = anime.year || '';
+            document.getElementById('animeStatus').value = anime.status || 'Ongoing';
+            document.getElementById('animeEpisodes').value = anime.episodes || '';
+            document.getElementById('animeRating').value = anime.rating || '';
+            document.getElementById('animeType').value = anime.type || 'TV';
+            document.getElementById('animeHasSubs').value = anime.hasSubs === false ? 'false' : 'true';
+            document.getElementById('animeHasAudio').value = anime.hasAudio === false ? 'false' : 'true';
+            document.getElementById('animeGenres').value = anime.genres ? anime.genres.join(', ') : '';
+            document.getElementById('animeSynopsis').value = anime.synopsis || '';
+            document.getElementById('animePoster').value = anime.poster || '';
+            document.getElementById('animeTrending').checked = anime.isTrending || false;
             
-            // Add anime form submission
-            document.getElementById('addAnimeForm').addEventListener('submit', function(e) {
+            // Change form submission to update instead of add
+            const form = document.getElementById('addAnimeForm');
+            
+            // Add hidden input for anime ID
+            let idInput = document.getElementById('editAnimeId');
+            if (!idInput) {
+                idInput = document.createElement('input');
+                idInput.type = 'hidden';
+                idInput.id = 'editAnimeId';
+                idInput.name = 'id';
+                form.appendChild(idInput);
+            }
+            idInput.value = animeId;
+            
+            // Change button text
+            const submitButton = form.querySelector('button[type="submit"]');
+            submitButton.innerHTML = '<i data-feather="save" class="inline h-4 w-4 mr-1"></i> Update Anime';
+            feather.replace();
+            
+            // Change form submission behavior
+            form.onsubmit = function(e) {
                 e.preventDefault();
                 
-                // Get form data
                 const formData = new FormData(this);
                 const animeData = {
+                    id: parseInt(formData.get('id')),
                     title: formData.get('title'),
                     year: parseInt(formData.get('year')),
                     status: formData.get('status'),
                     episodes: parseInt(formData.get('episodes')),
                     rating: parseFloat(formData.get('rating') || 0),
+                    type: formData.get('type') || 'TV',
+                    hasSubs: formData.get('hasSubs') === 'true',
+                    hasAudio: formData.get('hasAudio') === 'true',
                     genres: formData.get('genres').split(',').map(genre => genre.trim()),
                     synopsis: formData.get('synopsis'),
                     poster: formData.get('poster') || null,
-                    dateAdded: new Date().toISOString()
+                    isTrending: formData.get('isTrending') === 'on'
                 };
                 
-                // Submit anime data
-                fetch('/api/animes', {
-                    method: 'POST',
+                fetch(`/api/animes/${animeId}`, {
+                    method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json'
                     },
@@ -556,237 +1211,126 @@
                     return response.json();
                 })
                 .then(data => {
-                    alert('Anime added successfully!');
-                    this.reset();
+                    alert('Anime updated successfully!');
+                    resetAnimeForm();
                     loadAnimeList();
                     loadAnimeOptions();
+                    loadTrendingAnime();
+                    loadSchedule();
                     
                     // Switch to anime list tab
                     document.querySelector('[data-tab="anime-list"]').click();
                 })
                 .catch(error => {
-                    console.error('Error adding anime:', error);
-                    alert('Failed to add anime. Please try again.');
+                    console.error('Error updating anime:', error);
+                    alert('Failed to update anime. Please try again.');
                 });
-            });
-            
-            // Add episode form submission
-            document.getElementById('addEpisodeForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const formData = new FormData(this);
-                const animeId = formData.get('animeId');
-                const episodeNumber = parseInt(formData.get('episodeNumber'));
-                const uploadVideo = document.getElementById('uploadVideo').checked;
-                
-                if (uploadVideo) {
-                    // Handle file upload
-                    const videoFile = document.getElementById('videoFile').files[0];
-                    
-                    if (!videoFile) {
-                        alert('Please select a video file to upload.');
-                        return;
-                    }
-                    
-                    const uploadFormData = new FormData();
-                    uploadFormData.append('video', videoFile);
-                    uploadFormData.append('episodeNumber', episodeNumber);
-                    uploadFormData.append('title', formData.get('title') || '');
-                    uploadFormData.append('description', formData.get('description') || '');
-                    
-                    fetch(`/api/animes/${animeId}/episodes/upload`, {
-                        method: 'POST',
-                        body: uploadFormData
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert('Episode added successfully!');
-                        this.reset();
-                        document.getElementById('uploadVideo').checked = false;
-                        document.getElementById('videoUploadContainer').classList.add('hidden');
-                    })
-                    .catch(error => {
-                        console.error('Error uploading episode:', error);
-                        alert('Failed to upload episode. Please try again.');
-                    });
-                } else {
-                    // Handle video URLs
-                    const episodeData = {
-                        episodeNumber: episodeNumber,
-                        title: formData.get('title') || '',
-                        description: formData.get('description') || '',
-                        sources: {
-                            server1: formData.get('server1'),
-                            server2: formData.get('server2') || null
-                        }
-                    };
-                    
-                    fetch(`/api/animes/${animeId}/episodes`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify(episodeData)
-                    })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error('Network response was not ok');
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        alert('Episode added successfully!');
-                        this.reset();
-                    })
-                    .catch(error => {
-                        console.error('Error adding episode:', error);
-                        alert('Failed to add episode. Please try again.');
-                    });
-                }
-            });
-        }
+            };
+        })
+        .catch(error => {
+            console.error('Error loading anime for editing:', error);
+            alert('Failed to load anime data for editing. Please try again.');
+        });
+}
 
-        // Edit anime function
-        function editAnime(animeId) {
-            fetch(`/api/animes/${animeId}`)
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(anime => {
-                    // Switch to add anime tab
-                    document.querySelector('[data-tab="add-anime"]').click();
-                    
-                    // Fill form with anime data
-                    document.getElementById('animeTitle').value = anime.title || '';
-                    document.getElementById('animeYear').value = anime.year || '';
-                    document.getElementById('animeStatus').value = anime.status || 'Ongoing';
-                    document.getElementById('animeEpisodes').value = anime.episodes || '';
-                    document.getElementById('animeRating').value = anime.rating || '';
-                    document.getElementById('animeGenres').value = anime.genres ? anime.genres.join(', ') : '';
-                    document.getElementById('animeSynopsis').value = anime.synopsis || '';
-                    document.getElementById('animePoster').value = anime.poster || '';
-                    
-                    // Change form submission to update instead of add
-                    const form = document.getElementById('addAnimeForm');
-                    
-                    // Add hidden input for anime ID
-                    let idInput = document.getElementById('editAnimeId');
-                    if (!idInput) {
-                        idInput = document.createElement('input');
-                        idInput.type = 'hidden';
-                        idInput.id = 'editAnimeId';
-                        idInput.name = 'id';
-                        form.appendChild(idInput);
-                    }
-                    idInput.value = animeId;
-                    
-                    // Change button text
-                    const submitButton = form.querySelector('button[type="submit"]');
-                    submitButton.innerHTML = '<i data-feather="save" class="inline h-4 w-4 mr-1"></i> Update Anime';
-                    feather.replace();
-                    
-                    // Change form submission behavior
-                    form.onsubmit = function(e) {
-                        e.preventDefault();
-                        
-                        const formData = new FormData(this);
-                        const animeData = {
-                            id: parseInt(formData.get('id')),
-                            title: formData.get('title'),
-                            year: parseInt(formData.get('year')),
-                            status: formData.get('status'),
-                            episodes: parseInt(formData.get('episodes')),
-                            rating: parseFloat(formData.get('rating') || 0),
-                            genres: formData.get('genres').split(',').map(genre => genre.trim()),
-                            synopsis: formData.get('synopsis'),
-                            poster: formData.get('poster') || null
-                        };
-                        
-                        fetch(`/api/animes/${animeId}`, {
-                            method: 'PUT',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(animeData)
-                        })
-                        .then(response => {
-                            if (!response.ok) {
-                                throw new Error('Network response was not ok');
-                            }
-                            return response.json();
-                        })
-                        .then(data => {
-                            alert('Anime updated successfully!');
-                            resetAnimeForm();
-                            loadAnimeList();
-                            loadAnimeOptions();
-                            
-                            // Switch to anime list tab
-                            document.querySelector('[data-tab="anime-list"]').click();
-                        })
-                        .catch(error => {
-                            console.error('Error updating anime:', error);
-                            alert('Failed to update anime. Please try again.');
-                        });
-                    };
-                })
-                .catch(error => {
-                    console.error('Error loading anime for editing:', error);
-                    alert('Failed to load anime data for editing. Please try again.');
-                });
-        }
-
-        // Delete anime function
-        function deleteAnime(animeId) {
-            if (confirm('Are you sure you want to delete this anime? This action cannot be undone.')) {
-                fetch(`/api/animes/${animeId}`, {
-                    method: 'DELETE'
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    alert('Anime deleted successfully!');
-                    loadAnimeList();
-                    loadAnimeOptions();
-                })
-                .catch(error => {
-                    console.error('Error deleting anime:', error);
-                    alert('Failed to delete anime. Please try again.');
-                });
+// Delete anime function
+function deleteAnime(animeId) {
+    if (confirm('Are you sure you want to delete this anime? This action cannot be undone.')) {
+        fetch(`/api/animes/${animeId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
             }
-        }
+            return response.json();
+        })
+        .then(data => {
+            alert('Anime deleted successfully!');
+            loadAnimeList();
+            loadAnimeOptions();
+            loadTrendingAnime();
+            loadSchedule();
+        })
+        .catch(error => {
+            console.error('Error deleting anime:', error);
+            alert('Failed to delete anime. Please try again.');
+        });
+    }
+}
 
-        // Reset anime form
-        function resetAnimeForm() {
-            const form = document.getElementById('addAnimeForm');
-            form.reset();
-            
-            // Remove anime ID input if it exists
-            const idInput = document.getElementById('editAnimeId');
-            if (idInput) {
-                idInput.remove();
-            }
-            
-            // Reset button text
-            const submitButton = form.querySelector('button[type="submit"]');
-            submitButton.innerHTML = '<i data-feather="save" class="inline h-4 w-4 mr-1"></i> Save Anime';
-            feather.replace();
-            
-            // Reset form submission behavior
-            form.onsubmit = null;
+// Toggle trending status
+function toggleTrending(animeId, isTrending) {
+    fetch(`/api/trending/${animeId}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ isTrending })
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
         }
-    </script>
-    </body>
-    </html>
+        return response.json();
+    })
+    .then(data => {
+        loadTrendingAnime();
+        loadAnimeList(); // Refresh anime list to show updated trending status
+    })
+    .catch(error => {
+        console.error('Error updating trending status:', error);
+        alert('Failed to update trending status. Please try again.');
+    });
+}
+
+// Delete schedule function
+function deleteSchedule(scheduleId) {
+    if (confirm('Are you sure you want to delete this schedule?')) {
+        fetch(`/api/schedule/${scheduleId}`, {
+            method: 'DELETE'
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            alert('Schedule deleted successfully!');
+            loadSchedule();
+        })
+        .catch(error => {
+            console.error('Error deleting schedule:', error);
+            alert('Failed to delete schedule. Please try again.');
+        });
+    }
+}
+
+// Reset anime form
+function resetAnimeForm() {
+    const form = document.getElementById('addAnimeForm');
+    form.reset();
+    
+    // Remove anime ID input if it exists
+    const idInput = document.getElementById('editAnimeId');
+    if (idInput) {
+        idInput.remove();
+    }
+    
+    // Reset button text
+    const submitButton = form.querySelector('button[type="submit"]');
+    submitButton.innerHTML = '<i data-feather="save" class="inline h-4 w-4 mr-1"></i> Save Anime';
+    feather.replace();
+    
+    // Reset form submission behavior
+    form.onsubmit = null;
+}
+
+// Show error message
+function showErrorMessage(message) {
+    alert(message);
+}
+</script>
+</body>
+</html>
