@@ -19,7 +19,7 @@
             color: #333;
             transition: all 0.2s ease;
             text-align: center;
-            border-radius: 2px;
+            border-radius: 4px;
             height: 36px;
             display: flex;
             align-items: center;
@@ -29,7 +29,7 @@
             background-color: #e5e5e5;
         }
         .episode-btn.active {
-            background-color: #6766eb;
+            background-color: #4f46e5;
             color: white;
         }
         .episode-btn.current {
@@ -37,14 +37,15 @@
             color: white;
         }
         .plyr {
-            border-radius: 4px;
+            border-radius: 8px;
             overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         .control-btn {
             background-color: #f0f0f0;
             color: #333;
             padding: 5px 10px;
-            border-radius: 2px;
+            border-radius: 4px;
             font-size: 12px;
             display: flex;
             align-items: center;
@@ -54,8 +55,8 @@
             background-color: #e5e5e5;
         }
         .control-btn.active {
-            background-color: #ffc107;
-            color: #333;
+            background-color: #4f46e5;
+            color: white;
         }
         .dropdown-select {
             -webkit-appearance: none;
@@ -69,12 +70,12 @@
         }
         .episode-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 4px;
+            grid-template-columns: repeat(auto-fill, minmax(40px, 1fr));
+            gap: 8px;
         }
         @media (min-width: 640px) {
             .episode-grid {
-                grid-template-columns: repeat(8, 1fr);
+                grid-template-columns: repeat(auto-fill, minmax(45px, 1fr));
             }
         }
         .anime-info-tag {
@@ -95,33 +96,59 @@
         }
         /* Improved player styles */
         .plyr--video {
-            border-radius: 4px;
+            border-radius: 8px;
             overflow: hidden;
         }
         .plyr__control--overlaid {
-            background: rgba(0,0,0,0.6);
+            background: rgba(79, 70, 229, 0.8);
         }
         .plyr--full-ui input[type=range] {
-            color: #6766eb;
+            color: #4f46e5;
         }
         .plyr__control.plyr__tab-focus,
         .plyr__control:hover,
         .plyr__control[aria-expanded=true] {
-            background: #6766eb;
+            background: #4f46e5;
         }
         .plyr__menu__container .plyr__control[role=menuitemradio][aria-checked=true]::before {
-            background: #6766eb;
+            background: #4f46e5;
+        }
+        /* Loading spinner */
+        .loader {
+            border-top-color: #4f46e5;
+            -webkit-animation: spinner 1.5s linear infinite;
+            animation: spinner 1.5s linear infinite;
+        }
+        @-webkit-keyframes spinner {
+            0% { -webkit-transform: rotate(0deg); }
+            100% { -webkit-transform: rotate(360deg); }
+        }
+        @keyframes spinner {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body class="bg-gray-100">
     <!-- Simple Header -->
-    <div class="bg-white shadow-sm">
+    <div class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3">
-            <a href="index.html" class="text-xl font-bold text-black inline-flex items-center">
-                <i data-feather="arrow-left" class="h-5 w-5 mr-2"></i>
-                ANIME TAGALOG
-            </a>
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-lg font-bold text-indigo-600 flex items-center">
+                    <i data-feather="arrow-left" class="h-5 w-5 mr-2"></i>
+                    ANIME TAGALOG
+                </a>
+                <div class="flex gap-2">
+                    <button id="shareButton" class="text-gray-500 hover:text-indigo-600 flex items-center text-sm">
+                        <i data-feather="share-2" class="h-4 w-4 mr-1"></i>
+                        <span class="hidden sm:inline">Share</span>
+                    </button>
+                    <button id="downloadButton" class="text-gray-500 hover:text-indigo-600 flex items-center text-sm">
+                        <i data-feather="download" class="h-4 w-4 mr-1"></i>
+                        <span class="hidden sm:inline">Download</span>
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -129,28 +156,33 @@
         <!-- Video Player Section -->
         <div id="videoSection" class="mb-4">
             <!-- Video thumbnail (shown before video loads) -->
-            <div id="videoThumbnail" class="relative">
-                <img src="/api/placeholder/800/450" alt="Video Thumbnail" class="w-full h-auto rounded-sm">
-                <div class="absolute inset-0 flex items-center justify-center">
-                    <button id="playThumbnail" class="bg-gray-800 bg-opacity-70 text-white p-4 rounded-full hover:bg-opacity-80 transition">
+            <div id="videoThumbnail" class="relative rounded-lg overflow-hidden shadow-lg">
+                <img src="/api/placeholder/800/450" alt="Video Thumbnail" class="w-full h-auto object-cover">
+                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
+                    <button id="playThumbnail" class="bg-indigo-600 text-white p-4 rounded-full hover:bg-indigo-700 transition transform hover:scale-105">
                         <i data-feather="play" class="h-8 w-8"></i>
                     </button>
                 </div>
-                <div class="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-2 py-1 rounded">
-                    <span id="videoDuration">23:37</span>
+                <div class="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <span id="videoDuration">Loading...</span>
+                </div>
+                <div class="absolute top-4 left-4 bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    <span id="episodeLabel">Episode 1</span>
                 </div>
             </div>
             
             <!-- Video player (hidden initially) -->
             <div id="videoPlayerContainer" class="hidden">
-                <video id="player" playsinline controls class="w-full">
+                <video id="player" playsinline controls class="w-full rounded-lg shadow-lg">
                     <source id="videoSource" src="" type="video/mp4">
+                    <!-- Fallback for old browsers -->
+                    <p>Your browser doesn't support HTML5 video. Here is a <a href="">link to the video</a> instead.</p>
                 </video>
             </div>
         </div>
 
         <!-- Player Controls -->
-        <div class="bg-white shadow-sm p-2 mb-3 rounded-sm">
+        <div class="bg-white shadow-sm p-3 mb-3 rounded-lg">
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
                     <label class="inline-flex items-center cursor-pointer">
@@ -159,9 +191,15 @@
                     </label>
                     
                     <button id="autoNextBtn" class="control-btn text-xs">
-                        <span class="text-yellow-500 font-bold">Auto</span>
-                        <span class="ml-1">Next</span>
+                        <i data-feather="skip-forward" class="h-3 w-3 mr-1"></i> Auto Next
                     </button>
+                    
+                    <div>
+                        <select id="serverSelector" class="text-xs px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                            <option value="1">Server 1</option>
+                            <option value="2">Server 2</option>
+                        </select>
+                    </div>
                 </div>
                 
                 <div class="flex items-center gap-2">
@@ -177,23 +215,22 @@
         </div>
         
         <!-- Episode Selector -->
-        <div class="bg-white shadow-sm p-3 mb-3 rounded-sm">
-            <div class="flex items-center justify-between mb-2">
-                <select id="episodeRangeSelect" class="dropdown-select bg-gray-100 border-0 rounded-sm py-2 px-3 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500 mr-2">
+        <div class="bg-white shadow-sm p-3 mb-3 rounded-lg">
+            <div class="flex flex-col md:flex-row md:items-center gap-2 mb-3">
+                <select id="episodeRangeSelect" class="dropdown-select bg-gray-100 border-0 rounded-md py-2 px-3 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                     <!-- Will be populated dynamically based on total episodes -->
                 </select>
                 
-                <div class="flex-1 mr-2">
-                    <div class="relative">
-                        <input type="text" placeholder="Filter episodes..." id="filterEpisodes" class="w-full bg-gray-100 border-0 rounded-sm py-2 px-3 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500">
-                        <div class="absolute right-0 top-0 h-full flex items-center pr-2">
-                            <button id="viewListBtn" class="text-gray-500 hover:text-gray-700 p-1">
-                                <i data-feather="list" class="h-4 w-4"></i>
-                            </button>
-                            <button id="viewGridBtn" class="text-gray-500 hover:text-gray-700 p-1">
-                                <i data-feather="grid" class="h-4 w-4"></i>
-                            </button>
-                        </div>
+                <div class="relative flex-1">
+                    <input type="text" placeholder="Filter episodes..." id="filterEpisodes" 
+                          class="w-full bg-gray-100 border-0 rounded-md py-2 px-3 pr-16 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                    <div class="absolute right-0 top-0 h-full flex items-center pr-2">
+                        <button id="viewListBtn" class="text-gray-500 hover:text-indigo-600 p-1">
+                            <i data-feather="list" class="h-4 w-4"></i>
+                        </button>
+                        <button id="viewGridBtn" class="text-gray-500 hover:text-indigo-600 p-1">
+                            <i data-feather="grid" class="h-4 w-4"></i>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -201,72 +238,71 @@
             <!-- Episode Grid -->
             <div id="episodeGrid" class="episode-grid">
                 <!-- This will be populated by JavaScript -->
+                <div class="col-span-full flex justify-center py-3">
+                    <div class="loader ease-linear rounded-full border-4 border-t-4 border-gray-200 h-8 w-8"></div>
+                </div>
             </div>
         </div>
         
         <!-- Episode Information -->
-        <div class="bg-white shadow-sm p-3 mb-3 rounded-sm">
+        <div class="bg-white shadow-sm p-4 mb-3 rounded-lg">
             <h2 id="episodeTitle" class="text-lg font-semibold mb-1">Episode 1</h2>
-            <div class="mb-2 flex items-center text-xs text-gray-500">
-                <span id="episodeDate">October 21, 2023</span>
-                <span class="mx-2">•</span>
-                <button class="flex items-center hover:text-gray-900">
+            <div class="mb-2 flex flex-wrap items-center text-xs text-gray-500 gap-2">
+                <span id="episodeDate">Loading...</span>
+                <button id="episodeDownloadBtn" class="flex items-center hover:text-indigo-600 focus:outline-none">
                     <i data-feather="download" class="h-3 w-3 mr-1"></i> Download
                 </button>
-                <span class="mx-2">•</span>
-                <button class="flex items-center hover:text-gray-900">
+                <button id="episodeShareBtn" class="flex items-center hover:text-indigo-600 focus:outline-none">
                     <i data-feather="share-2" class="h-3 w-3 mr-1"></i> Share
                 </button>
             </div>
-            <p id="episodeDescription" class="text-sm text-gray-600 mb-2">
-                Episode description will appear here. This provides information about the current episode's content.
+            <p id="episodeDescription" class="text-sm text-gray-600 mb-3">
+                Loading episode information...
             </p>
             
-            <div class="text-xs text-yellow-600 flex items-center mt-2">
+            <div class="text-xs text-yellow-600 flex items-center mt-2 bg-yellow-50 p-2 rounded-md">
                 <i data-feather="alert-circle" class="h-3 w-3 mr-1"></i>
-                If the player doesn't work or keeps buffering, try refreshing the page.
+                If the player doesn't work or keeps buffering, try changing the server or refreshing the page.
             </div>
         </div>
         
         <!-- Anime Info Section -->
-        <div class="bg-white shadow-sm rounded-sm p-4 mb-3">
+        <div class="bg-white shadow-sm rounded-lg p-4 mb-3">
             <div class="flex flex-col md:flex-row gap-4">
                 <!-- Anime Image -->
                 <div class="w-full md:w-1/4 lg:w-1/5">
-                    <img id="animeImage" src="/api/placeholder/300/450" alt="Anime Cover" class="w-full h-auto object-cover rounded-sm">
+                    <img id="animeImage" src="/api/placeholder/300/450" alt="Anime Cover" class="w-full h-auto object-cover rounded-lg shadow-sm">
                 </div>
                 
                 <!-- Anime Details -->
                 <div class="flex-1">
-                    <h1 id="animeTitle" class="text-xl font-bold mb-2">Anime Title</h1>
+                    <h1 id="animeTitle" class="text-xl font-bold mb-2">Loading anime...</h1>
                     
-                    <div id="animeInfo" class="grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 mb-3 text-sm">
+                    <div id="animeInfo" class="grid grid-cols-2 sm:grid-cols-3 gap-y-2 gap-x-4 mb-4 text-sm">
                         <div class="flex items-center">
                             <span class="text-gray-500 w-16 sm:w-20">Status:</span>
-                            <span id="animeStatus" class="font-medium">Ongoing</span>
+                            <span id="animeStatus" class="font-medium">Loading...</span>
                         </div>
                         <div class="flex items-center">
                             <span class="text-gray-500 w-16 sm:w-20">Episodes:</span>
-                            <span id="animeEpisodes" class="font-medium">24</span>
+                            <span id="animeEpisodes" class="font-medium">?</span>
                         </div>
                         <div class="flex items-center">
                             <span class="text-gray-500 w-16 sm:w-20">Year:</span>
-                            <span id="animeYear" class="font-medium">2023</span>
+                            <span id="animeYear" class="font-medium">Loading...</span>
                         </div>
                         <div class="flex items-center col-span-2 sm:col-span-1">
                             <span class="text-gray-500 w-16 sm:w-20">Rating:</span>
                             <span id="animeRating" class="font-medium flex items-center">
-                                <span class="text-yellow-500 mr-1">★</span> 8.7
+                                <span class="text-yellow-500 mr-1">★</span> ?
                             </span>
                         </div>
                     </div>
                     
                     <!-- Genres -->
-                    <div class="mb-3">
+                    <div class="mb-4">
                         <div id="animeGenres" class="flex flex-wrap">
-                            <span class="anime-info-tag bg-blue-100 text-blue-800">Action</span>
-                            <span class="anime-info-tag bg-green-100 text-green-800">Adventure</span>
-                            <span class="anime-info-tag bg-purple-100 text-purple-800">Fantasy</span>
+                            <span class="anime-info-tag bg-gray-100 text-gray-500">Loading genres...</span>
                         </div>
                     </div>
                     
@@ -274,8 +310,18 @@
                     <div>
                         <h3 class="text-sm font-semibold mb-1">Synopsis</h3>
                         <p id="animeSynopsis" class="text-sm text-gray-600">
-                            The anime synopsis will be displayed here. This provides a summary of the anime's plot and setting.
+                            Loading anime synopsis...
                         </p>
+                    </div>
+
+                    <!-- Related Anime -->
+                    <div class="mt-4 pt-4 border-t border-gray-100">
+                        <h3 class="text-sm font-semibold mb-2">Related Anime</h3>
+                        <div id="relatedAnime" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                            <div class="bg-gray-100 h-12 animate-pulse rounded-md"></div>
+                            <div class="bg-gray-100 h-12 animate-pulse rounded-md"></div>
+                            <div class="bg-gray-100 h-12 animate-pulse rounded-md"></div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -286,6 +332,7 @@
         let player;
         let currentAnime = null;
         let currentEpisode = 1;
+        let currentServer = 1;
         let allEpisodes = [];
         let autoplayEnabled = localStorage.getItem('autoplayEnabled') === 'true';
         let autoNextEnabled = localStorage.getItem('autoNextEnabled') === 'true';
@@ -305,6 +352,13 @@
                 if (episodeParam && !isNaN(episodeParam)) {
                     currentEpisode = parseInt(episodeParam);
                 }
+                
+                // Check if server parameter is present
+                const serverParam = urlParams.get('server');
+                if (serverParam && (serverParam === '1' || serverParam === '2')) {
+                    currentServer = parseInt(serverParam);
+                    document.getElementById('serverSelector').value = serverParam;
+                }
             } else {
                 showError('No anime selected. Please select an anime from the home page.');
             }
@@ -316,6 +370,9 @@
             }
             
             setupEventListeners();
+            
+            // Update episode label
+            document.getElementById('episodeLabel').textContent = `Episode ${currentEpisode}`;
         });
 
         // Load anime details
@@ -329,7 +386,7 @@
                 })
                 .then(data => {
                     currentAnime = data;
-                    document.title = `${data.title} - Anime Tagalog`;
+                    document.title = `${data.title} - Episode ${currentEpisode} - Anime Tagalog`;
                     
                     // Update anime info
                     document.getElementById('animeTitle').textContent = data.title || 'Unknown Title';
@@ -393,10 +450,51 @@
                         const rangeEnd = Math.min(rangeStart + 23, totalEpisodes);
                         generateEpisodeGrid(rangeStart, rangeEnd);
                     }
+                    
+                    // Load related anime
+                    loadRelatedAnime(animeId);
                 })
                 .catch(error => {
                     console.error('Error loading anime details:', error);
                     showError('Failed to load anime details');
+                });
+        }
+        
+        // Load related anime
+        function loadRelatedAnime(animeId) {
+            fetch(`/api/animes/${animeId}/related`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(related => {
+                    const container = document.getElementById('relatedAnime');
+                    container.innerHTML = '';
+                    
+                    if (!related || related.length === 0) {
+                        container.innerHTML = '<p class="text-gray-500 text-sm col-span-full">No related anime found</p>';
+                        return;
+                    }
+                    
+                    related.forEach(anime => {
+                        const card = document.createElement('a');
+                        card.href = `watch.html?id=${anime.id}`;
+                        card.className = 'flex items-center p-2 bg-gray-50 hover:bg-gray-100 rounded-md transition';
+                        
+                        card.innerHTML = `
+                            <img src="${anime.poster || '/api/placeholder/60/90'}" alt="${anime.title}" class="h-10 w-6 object-cover mr-2 rounded">
+                            <span class="text-xs font-medium truncate">${anime.title}</span>
+                        `;
+                        
+                        container.appendChild(card);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading related anime:', error);
+                    const container = document.getElementById('relatedAnime');
+                    container.innerHTML = '<p class="text-gray-500 text-sm col-span-full">Could not load related anime</p>';
                 });
         }
 
@@ -466,6 +564,7 @@
             document.getElementById('episodeTitle').textContent = `Episode ${episodeNumber}`;
             document.getElementById('episodeDescription').textContent = 'No description available for this episode.';
             document.getElementById('episodeDate').textContent = 'Unknown date';
+            document.getElementById('episodeLabel').textContent = `Episode ${episodeNumber}`;
             
             // Update with actual data if available
             if (episode) {
@@ -485,6 +584,22 @@
                         day: 'numeric'
                     });
                 }
+                
+                // Enable or disable download button based on whether a source is available
+                const downloadBtn = document.getElementById('episodeDownloadBtn');
+                const downloadButton = document.getElementById('downloadButton');
+                
+                if (episode.sources && (episode.sources.server1 || episode.sources.server2)) {
+                    downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                    downloadBtn.disabled = false;
+                    downloadButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                    downloadButton.disabled = false;
+                } else {
+                    downloadBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                    downloadBtn.disabled = true;
+                    downloadButton.classList.add('opacity-50', 'cursor-not-allowed');
+                    downloadButton.disabled = true;
+                }
             }
         }
 
@@ -495,7 +610,7 @@
                 document.getElementById('videoThumbnail').classList.add('hidden');
                 document.getElementById('videoPlayerContainer').classList.remove('hidden');
                 initializeVideoPlayer();
-                loadEpisodeVideo(currentEpisode);
+                loadEpisodeVideo(currentEpisode, currentServer);
             });
             
             // Autoplay toggle
@@ -514,14 +629,14 @@
             // Previous episode button
             document.getElementById('prevEpisodeBtn').addEventListener('click', function() {
                 if (currentEpisode > 1) {
-                    navigateToEpisode(currentEpisode - 1);
+                    navigateToEpisode(currentEpisode - 1, currentServer);
                 }
             });
             
             // Next episode button
             document.getElementById('nextEpisodeBtn').addEventListener('click', function() {
                 if (currentAnime && currentEpisode < currentAnime.episodes) {
-                    navigateToEpisode(currentEpisode + 1);
+                    navigateToEpisode(currentEpisode + 1, currentServer);
                 }
             });
             
@@ -547,10 +662,41 @@
                 const grid = document.getElementById('episodeGrid');
                 
                 if (window.innerWidth >= 640) {
-                    grid.style.gridTemplateColumns = 'repeat(8, 1fr)';
+                    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(45px, 1fr))';
                 } else {
-                    grid.style.gridTemplateColumns = 'repeat(4, 1fr)';
+                    grid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(40px, 1fr))';
                 }
+            });
+            
+            // Server selector
+            document.getElementById('serverSelector').addEventListener('change', function() {
+                currentServer = parseInt(this.value);
+                if (player) {
+                    loadEpisodeVideo(currentEpisode, currentServer);
+                }
+                
+                // Update URL without reloading page
+                const url = new URL(window.location);
+                url.searchParams.set('server', currentServer);
+                window.history.pushState({}, '', url);
+            });
+            
+            // Download buttons
+            document.getElementById('episodeDownloadBtn').addEventListener('click', function() {
+                downloadCurrentEpisode();
+            });
+            
+            document.getElementById('downloadButton').addEventListener('click', function() {
+                downloadCurrentEpisode();
+            });
+            
+            // Share buttons
+            document.getElementById('episodeShareBtn').addEventListener('click', function() {
+                shareEpisode();
+            });
+            
+            document.getElementById('shareButton').addEventListener('click', function() {
+                shareEpisode();
             });
         }
 
@@ -560,25 +706,77 @@
                 controls: [
                     'play-large', 'play', 'progress', 'current-time', 'mute',
                     'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'
-                ]
+                ],
+                settings: ['captions', 'quality', 'speed', 'loop'],
+                keyboard: { focused: true, global: true }
             });
             
             // Handle auto-next when video ends
             player.on('ended', function() {
                 if (autoNextEnabled && currentAnime && currentEpisode < currentAnime.episodes) {
-                    navigateToEpisode(currentEpisode + 1);
+                    navigateToEpisode(currentEpisode + 1, currentServer);
+                }
+            });
+            
+            // Update video duration
+            player.on('loadedmetadata', function() {
+                const duration = player.duration;
+                const minutes = Math.floor(duration / 60);
+                const seconds = Math.floor(duration % 60);
+                document.getElementById('videoDuration').textContent = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            });
+            
+            // Handle errors
+            player.on('error', function() {
+                console.error('Video playback error. Trying fallback server...');
+                
+                // Try alternate server if current one fails
+                if (currentServer === 1 && hasServer2Source(currentEpisode)) {
+                    currentServer = 2;
+                    document.getElementById('serverSelector').value = '2';
+                    loadEpisodeVideo(currentEpisode, currentServer);
+                    
+                    // Show notification
+                    showNotification('Server 1 failed. Switching to Server 2...');
                 }
             });
         }
+        
+        // Check if episode has server2 source
+        function hasServer2Source(episodeNumber) {
+            const episode = allEpisodes.find(ep => ep.episodeNumber === episodeNumber);
+            return episode && episode.sources && episode.sources.server2;
+        }
+        
+        // Show notification message
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition transform translate-y-0';
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.classList.add('translate-y-20', 'opacity-0');
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
 
         // Load episode video
-        function loadEpisodeVideo(episodeNumber) {
+        function loadEpisodeVideo(episodeNumber, serverNumber) {
             if (!currentAnime) return;
             
-            const videoUrl = `/api/animes/${currentAnime.id}/episodes/${episodeNumber}/server/1`;
+            const videoUrl = `/api/animes/${currentAnime.id}/episodes/${episodeNumber}/server/${serverNumber}`;
             
             // Update video source
             if (player) {
+                // Show loading indicator
+                player.poster = currentAnime.poster || '/api/placeholder/800/450';
+                
                 player.source = {
                     type: 'video',
                     sources: [
@@ -603,17 +801,23 @@
         }
 
         // Navigate to episode
-        function navigateToEpisode(episodeNumber) {
+        function navigateToEpisode(episodeNumber, serverNumber) {
             // Update current episode
             currentEpisode = episodeNumber;
             
             // Update URL without reloading page
             const url = new URL(window.location);
             url.searchParams.set('ep', episodeNumber);
+            url.searchParams.set('server', serverNumber);
             window.history.pushState({}, '', url);
             
+            // Update document title
+            if (currentAnime) {
+                document.title = `${currentAnime.title} - Episode ${episodeNumber} - Anime Tagalog`;
+            }
+            
             // Load the video
-            loadEpisodeVideo(episodeNumber);
+            loadEpisodeVideo(episodeNumber, serverNumber);
             
             // Check if the episode is in the current range
             const select = document.getElementById('episodeRangeSelect');
@@ -640,10 +844,23 @@
             const totalEpisodes = currentAnime ? (currentAnime.episodes || 0) : 0;
             const actualEnd = Math.min(end, totalEpisodes);
             
+            if (totalEpisodes === 0) {
+                grid.innerHTML = '<div class="col-span-full text-center py-4 text-gray-500">No episodes available</div>';
+                return;
+            }
+            
             for (let i = start; i <= actualEnd; i++) {
                 const button = document.createElement('button');
                 button.className = 'episode-btn';
                 button.textContent = i;
+                
+                // Check if episode has available sources
+                const episode = allEpisodes.find(ep => ep.episodeNumber === i);
+                const hasSource = episode && episode.sources && (episode.sources.server1 || episode.sources.server2);
+                
+                if (!hasSource) {
+                    button.classList.add('opacity-50');
+                }
                 
                 // Mark current episode
                 if (i === currentEpisode) {
@@ -652,7 +869,11 @@
                 
                 // Handle click
                 button.addEventListener('click', function() {
-                    navigateToEpisode(i);
+                    if (hasSource) {
+                        navigateToEpisode(i, currentServer);
+                    } else {
+                        showNotification('This episode is not available yet');
+                    }
                 });
                 
                 grid.appendChild(button);
@@ -693,17 +914,71 @@
                 }
             });
         }
+        
+        // Download current episode
+        function downloadCurrentEpisode() {
+            if (!currentAnime || !allEpisodes) return;
+            
+            const episode = allEpisodes.find(ep => ep.episodeNumber === currentEpisode);
+            if (!episode || !episode.sources) {
+                showNotification('No download source available');
+                return;
+            }
+            
+            // Get source URL
+            const sourceUrl = episode.sources[`server${currentServer}`];
+            if (!sourceUrl) {
+                showNotification(`No source available for Server ${currentServer}`);
+                return;
+            }
+            
+            // Create a temporary anchor element to trigger download
+            const link = document.createElement('a');
+            link.href = sourceUrl;
+            link.download = `${currentAnime.title} - Episode ${currentEpisode}.mp4`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Share episode
+        function shareEpisode() {
+            if (!currentAnime) return;
+            
+            // Create share URL
+            const shareUrl = window.location.href;
+            const shareTitle = `${currentAnime.title} - Episode ${currentEpisode} - Anime Tagalog`;
+            
+            // Use Web Share API if available
+            if (navigator.share) {
+                navigator.share({
+                    title: shareTitle,
+                    url: shareUrl
+                }).catch(error => {
+                    console.error('Error sharing:', error);
+                });
+            } else {
+                // Fallback: copy to clipboard
+                navigator.clipboard.writeText(shareUrl).then(() => {
+                    showNotification('Link copied to clipboard!');
+                }).catch(error => {
+                    console.error('Failed to copy:', error);
+                    showNotification('Failed to copy link');
+                });
+            }
+        }
 
         // Show error message
         function showError(message) {
             const container = document.querySelector('.container');
             container.innerHTML = `
-                <div class="mt-6 p-4 bg-white shadow-sm rounded-sm">
+                <div class="mt-6 p-4 bg-white shadow-sm rounded-lg">
                     <div class="flex flex-col items-center p-6 text-center">
                         <i data-feather="alert-circle" class="text-red-500 h-12 w-12 mb-4"></i>
                         <h3 class="text-lg font-medium text-red-800 mb-2">Error</h3>
                         <p class="text-gray-600 mb-4">${message}</p>
-                        <a href="index.html" class="px-4 py-2 bg-indigo-600 text-white rounded-sm">
+                        <a href="index.html" class="px-4 py-2 bg-indigo-600 text-white rounded-md">
                             Return to Home
                         </a>
                     </div>
