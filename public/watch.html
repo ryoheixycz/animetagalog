@@ -32,10 +32,6 @@
             background-color: #4f46e5;
             color: white;
         }
-        .episode-btn.current {
-            background-color: #536e55;
-            color: white;
-        }
         .plyr {
             border-radius: 8px;
             overflow: hidden;
@@ -161,9 +157,9 @@
         <!-- Video Player Section -->
         <div id="videoSection" class="mb-4">
             <!-- Video thumbnail (shown before video loads) -->
-            <div id="videoThumbnail" class="relative rounded-lg overflow-hidden shadow-lg group">
+            <div id="videoThumbnail" class="relative rounded-lg overflow-hidden shadow-lg group cursor-pointer">
                 <img src="/api/placeholder/800/450" alt="Video Thumbnail" class="w-full h-auto object-cover">
-                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 group-hover:bg-opacity-40 transition">
+                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 group-hover:bg-opacity-50 transition">
                     <button id="playThumbnail" class="bg-indigo-600 text-white p-4 rounded-full hover:bg-indigo-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <i data-feather="play" class="h-8 w-8"></i>
                     </button>
@@ -179,7 +175,7 @@
                     <div class="bg-black bg-opacity-70 rounded-full px-3 py-1">
                         <select id="thumbnailServerSelector" class="bg-transparent text-white text-xs border-none focus:outline-none focus:ring-0">
                             <option value="1">Server 1</option>
-                            <option value="2">Server 2</option>
+                            <option value="2" selected>Server 2</option>
                         </select>
                     </div>
                 </div>
@@ -190,7 +186,7 @@
                 <video id="player" playsinline controls class="w-full rounded-lg shadow-lg">
                     <source id="videoSource" src="" type="video/mp4">
                     <!-- Fallback for old browsers -->
-                    <p>Your browser doesn't support HTML5 video. Here is a <a href="">link to the video</a> instead.</p>
+                    <p>Your browser doesn't support HTML5 video.</p>
                 </video>
             </div>
         </div>
@@ -213,7 +209,7 @@
                     <div>
                         <select id="serverSelector" class="text-xs px-2 py-1 border rounded-md focus:outline-none focus:ring-1 focus:ring-indigo-500">
                             <option value="1">Server 1</option>
-                            <option value="2">Server 2</option>
+                            <option value="2" selected>Server 2</option>
                         </select>
                     </div>
                 </div>
@@ -260,36 +256,22 @@
             </div>
         </div>
         
-        <!-- Episode Information -->
-        <div class="bg-white shadow-sm p-4 mb-3 rounded-lg">
-            <h2 id="episodeTitle" class="text-lg font-semibold mb-1">Episode 1</h2>
-            <div class="mb-2 flex flex-wrap items-center text-xs text-gray-500 gap-2">
-                <span id="episodeDate">Loading...</span>
-                <div class="flex items-center gap-2">
-                    <button id="episodeDownloadBtn" class="flex items-center hover:text-indigo-600 focus:outline-none">
-                        <i data-feather="download" class="h-3 w-3 mr-1"></i> Download
-                    </button>
-                    <button id="episodeShareBtn" class="flex items-center hover:text-indigo-600 focus:outline-none">
-                        <i data-feather="share-2" class="h-3 w-3 mr-1"></i> Share
-                    </button>
-                </div>
-            </div>
-            <p id="episodeDescription" class="text-sm text-gray-600 mb-3">
-                Loading episode information...
-            </p>
-            
-            <div class="text-xs text-yellow-600 flex items-center mt-2 bg-yellow-50 p-2 rounded-md">
-                <i data-feather="alert-circle" class="h-3 w-3 mr-1"></i>
-                If the player doesn't work, try changing to Server 2 or refreshing the page.
-            </div>
-        </div>
-        
         <!-- Anime Info Section -->
         <div class="bg-white shadow-sm rounded-lg p-4 mb-3">
             <div class="flex flex-col md:flex-row gap-4">
                 <!-- Anime Image -->
                 <div class="w-full md:w-1/4 lg:w-1/5">
                     <img id="animeImage" src="/api/placeholder/300/450" alt="Anime Cover" class="w-full h-auto object-cover rounded-lg shadow-sm">
+                    
+                    <!-- Quick Actions -->
+                    <div class="mt-2 flex flex-wrap gap-1">
+                        <button id="downloadBtn" class="w-full py-1 px-2 text-xs bg-gray-100 hover:bg-gray-200 rounded flex items-center justify-center">
+                            <i data-feather="download" class="h-3 w-3 mr-1"></i> Download
+                        </button>
+                        <button id="shareBtn" class="w-full py-1 px-2 text-xs bg-gray-100 hover:bg-gray-200 rounded flex items-center justify-center">
+                            <i data-feather="share-2" class="h-3 w-3 mr-1"></i> Share
+                        </button>
+                    </div>
                 </div>
                 
                 <!-- Anime Details -->
@@ -353,7 +335,7 @@
         let player;
         let currentAnime = null;
         let currentEpisode = 1;
-        let currentServer = 1;
+        let currentServer = 2; // Default to server 2
         let allEpisodes = [];
         let autoplayEnabled = localStorage.getItem('autoplayEnabled') === 'true';
         let autoNextEnabled = localStorage.getItem('autoNextEnabled') === 'true';
@@ -379,14 +361,11 @@
                 const serverParam = urlParams.get('server');
                 if (serverParam && (serverParam === '1' || serverParam === '2')) {
                     currentServer = parseInt(serverParam);
-                    document.getElementById('serverSelector').value = serverParam;
-                    document.getElementById('thumbnailServerSelector').value = serverParam;
-                } else {
-                    // Default to server 2 if no server specified
-                    currentServer = 2;
-                    document.getElementById('serverSelector').value = '2';
-                    document.getElementById('thumbnailServerSelector').value = '2';
                 }
+                
+                // Set server selectors to current server
+                document.getElementById('serverSelector').value = currentServer.toString();
+                document.getElementById('thumbnailServerSelector').value = currentServer.toString();
             } else {
                 showError('No anime selected. Please select an anime from the home page.');
             }
@@ -486,7 +465,7 @@
                     // Auto-play if enabled
                     if (autoplayEnabled) {
                         setTimeout(() => {
-                            document.getElementById('playThumbnail').click();
+                            document.getElementById('videoThumbnail').click();
                         }, 500);
                     }
                 })
@@ -585,6 +564,23 @@
                 })
                 .then(data => {
                     allEpisodes = data;
+                    
+                    // If no episodes are available but we know from anime data that there should be episodes,
+                    // assume all episodes are available through batch system
+                    if ((!allEpisodes || allEpisodes.length === 0) && currentAnime && currentAnime.episodes > 0) {
+                        // Create dummy episode data for all episodes
+                        allEpisodes = [];
+                        for (let i = 1; i <= currentAnime.episodes; i++) {
+                            allEpisodes.push({
+                                episodeNumber: i,
+                                title: `Episode ${i}`,
+                                sources: {
+                                    server2: `/api/animes/${animeId}/episodes/${i}/server/2` // Assume server 2 is available
+                                }
+                            });
+                        }
+                    }
+                    
                     updateEpisodeInfo(currentEpisode);
                 })
                 .catch(error => {
@@ -595,62 +591,26 @@
 
         // Update episode information
         function updateEpisodeInfo(episodeNumber) {
-            const episode = allEpisodes.find(ep => ep.episodeNumber === episodeNumber);
-            
-            // Set default values
-            document.getElementById('episodeTitle').textContent = `Episode ${episodeNumber}`;
-            document.getElementById('episodeDescription').textContent = 'No description available for this episode.';
-            document.getElementById('episodeDate').textContent = 'Unknown date';
-            document.getElementById('episodeLabel').textContent = `Episode ${episodeNumber}`;
-            
-            // Update with actual data if available
-            if (episode) {
-                if (episode.title) {
-                    document.getElementById('episodeTitle').textContent = `Episode ${episodeNumber}: ${episode.title}`;
-                }
-                
-                if (episode.description) {
-                    document.getElementById('episodeDescription').textContent = episode.description;
-                }
-                
-                if (episode.dateAdded) {
-                    const date = new Date(episode.dateAdded);
-                    document.getElementById('episodeDate').textContent = date.toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'long',
-                        day: 'numeric'
-                    });
-                }
-                
-                // Enable or disable download button based on whether a source is available
-                const downloadBtn = document.getElementById('episodeDownloadBtn');
-                
-                if (episode.sources && (episode.sources.server1 || episode.sources.server2)) {
-                    downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
-                    downloadBtn.disabled = false;
-                } else {
-                    downloadBtn.classList.add('opacity-50', 'cursor-not-allowed');
-                    downloadBtn.disabled = true;
-                }
-                
-                // Check if we have server2 and prefer it if available
-                if (episode.sources && episode.sources.server2 && currentServer === 1) {
-                    // Automatically switch to server 2 if it's available
-                    currentServer = 2;
-                    document.getElementById('serverSelector').value = '2';
-                    document.getElementById('thumbnailServerSelector').value = '2';
-                    
-                    if (playerInitialized) {
-                        loadEpisodeVideo(currentEpisode, currentServer);
-                    }
-                }
+            // Always assume episode exists if we're in range of the anime's episode count
+            if (currentAnime && episodeNumber <= currentAnime.episodes) {
+                // Update title
+                document.getElementById('episodeLabel').textContent = `Episode ${episodeNumber}`;
             }
         }
 
         // Setup event listeners
         function setupEventListeners() {
+            // Click on thumbnail to play
+            document.getElementById('videoThumbnail').addEventListener('click', function() {
+                document.getElementById('videoThumbnail').classList.add('hidden');
+                document.getElementById('videoPlayerContainer').classList.remove('hidden');
+                initializeVideoPlayer();
+                loadEpisodeVideo(currentEpisode, currentServer);
+            });
+            
             // Play thumbnail button
-            document.getElementById('playThumbnail').addEventListener('click', function() {
+            document.getElementById('playThumbnail').addEventListener('click', function(e) {
+                e.stopPropagation(); // Prevent triggering the parent click handler twice
                 document.getElementById('videoThumbnail').classList.add('hidden');
                 document.getElementById('videoPlayerContainer').classList.remove('hidden');
                 initializeVideoPlayer();
@@ -737,7 +697,8 @@
             });
             
             // Thumbnail server selector
-            document.getElementById('thumbnailServerSelector').addEventListener('change', function() {
+            document.getElementById('thumbnailServerSelector').addEventListener('change', function(e) {
+                e.stopPropagation(); // Prevent triggering parent click
                 currentServer = parseInt(this.value);
                 document.getElementById('serverSelector').value = this.value;
                 
@@ -747,13 +708,13 @@
                 window.history.pushState({}, '', url);
             });
             
-            // Download button
-            document.getElementById('episodeDownloadBtn').addEventListener('click', function() {
+            // Download buttons
+            document.getElementById('downloadBtn').addEventListener('click', function() {
                 downloadCurrentEpisode();
             });
             
             // Share button
-            document.getElementById('episodeShareBtn').addEventListener('click', function() {
+            document.getElementById('shareBtn').addEventListener('click', function() {
                 shareEpisode();
             });
             
@@ -774,17 +735,32 @@
                 }
                 
                 // Number 1: Server 1
-                if (e.key === '1' && !playerInitialized) {
+                if (e.key === '1' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
                     currentServer = 1;
                     document.getElementById('serverSelector').value = '1';
                     document.getElementById('thumbnailServerSelector').value = '1';
+                    
+                    if (playerInitialized) {
+                        loadEpisodeVideo(currentEpisode, currentServer);
+                    }
                 }
                 
                 // Number 2: Server 2
-                if (e.key === '2' && !playerInitialized) {
+                if (e.key === '2' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
                     currentServer = 2;
                     document.getElementById('serverSelector').value = '2';
                     document.getElementById('thumbnailServerSelector').value = '2';
+                    
+                    if (playerInitialized) {
+                        loadEpisodeVideo(currentEpisode, currentServer);
+                    }
+                }
+                
+                // Space: Toggle play/pause if player is initialized
+                if (e.key === ' ' && playerInitialized && document.activeElement.tagName !== 'BUTTON' && 
+                    document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'SELECT') {
+                    e.preventDefault();
+                    player.togglePlay();
                 }
             });
         }
@@ -822,11 +798,8 @@
             player.on('error', function(event) {
                 console.error('Video playback error. Trying fallback server...', event);
                 
-                // Get the current episode
-                const episode = allEpisodes.find(ep => ep.episodeNumber === currentEpisode);
-                
                 // Try alternate server if current one fails
-                if (currentServer === 1 && episode && episode.sources && episode.sources.server2) {
+                if (currentServer === 1) {
                     currentServer = 2;
                     document.getElementById('serverSelector').value = '2';
                     document.getElementById('thumbnailServerSelector').value = '2';
@@ -834,16 +807,10 @@
                     
                     // Show notification
                     showNotification('Server 1 failed. Switched to Server 2 automatically.');
-                } else if (currentServer === 2 && episode && episode.sources && episode.sources.server1) {
-                    currentServer = 1;
-                    document.getElementById('serverSelector').value = '1';
-                    document.getElementById('thumbnailServerSelector').value = '1';
-                    loadEpisodeVideo(currentEpisode, currentServer);
-                    
-                    // Show notification
-                    showNotification('Server 2 failed. Switched to Server 1 automatically.');
-                } else {
-                    showNotification('Video playback error. Please try a different server or episode.');
+                } else if (currentEpisode < currentAnime.episodes) {
+                    // If server 2 fails, try the next episode with server 2
+                    navigateToEpisode(currentEpisode + 1, 2);
+                    showNotification('Episode not available. Trying next episode.');
                 }
             });
         }
@@ -871,32 +838,7 @@
         function loadEpisodeVideo(episodeNumber, serverNumber) {
             if (!currentAnime) return;
             
-            const episode = allEpisodes.find(ep => ep.episodeNumber === episodeNumber);
-            if (!episode || !episode.sources) {
-                showNotification('Episode not available');
-                return;
-            }
-            
-            // Check which server to use
-            const serverKey = `server${serverNumber}`;
-            if (!episode.sources[serverKey]) {
-                // Try the alternate server if current one doesn't exist
-                const altServerNumber = serverNumber === 1 ? 2 : 1;
-                const altServerKey = `server${altServerNumber}`;
-                
-                if (episode.sources[altServerKey]) {
-                    // Switch server
-                    currentServer = altServerNumber;
-                    document.getElementById('serverSelector').value = altServerNumber.toString();
-                    document.getElementById('thumbnailServerSelector').value = altServerNumber.toString();
-                    showNotification(`Server ${serverNumber} not available. Switched to Server ${altServerNumber}.`);
-                    serverNumber = altServerNumber;
-                } else {
-                    showNotification('No video source available for this episode');
-                    return;
-                }
-            }
-            
+            // Create the video URL directly - this is crucial for batch episodes
             const videoUrl = `/api/animes/${currentAnime.id}/episodes/${episodeNumber}/server/${serverNumber}`;
             
             // Update video source
@@ -935,6 +877,17 @@
 
         // Navigate to episode
         function navigateToEpisode(episodeNumber, serverNumber) {
+            // Don't navigate past the total episodes
+            if (currentAnime && episodeNumber > currentAnime.episodes) {
+                showNotification('This is the last episode.');
+                return;
+            }
+            
+            if (episodeNumber < 1) {
+                showNotification('This is the first episode.');
+                return;
+            }
+            
             // Update current episode
             currentEpisode = episodeNumber;
             
@@ -950,11 +903,7 @@
             } else {
                 // Update episode label
                 document.getElementById('episodeLabel').textContent = `Episode ${episodeNumber}`;
-                // If player isn't initialized, we'll update episode info
-                const episode = allEpisodes.find(ep => ep.episodeNumber === episodeNumber);
-                if (episode) {
-                    updateEpisodeInfo(episodeNumber);
-                }
+                updateEpisodeInfo(episodeNumber);
             }
             
             // Check if the episode is in the current range
@@ -992,26 +941,14 @@
                 button.className = 'episode-btn';
                 button.textContent = i;
                 
-                // Check if episode has available sources
-                const episode = allEpisodes.find(ep => ep.episodeNumber === i);
-                const hasSource = episode && episode.sources && (episode.sources.server1 || episode.sources.server2);
-                
-                if (!hasSource) {
-                    button.classList.add('opacity-50');
-                }
-                
                 // Mark current episode
                 if (i === currentEpisode) {
                     button.classList.add('active');
                 }
                 
-                // Handle click
+                // Handle click - all episodes are assumed to be available with batch system
                 button.addEventListener('click', function() {
-                    if (hasSource) {
-                        navigateToEpisode(i, currentServer);
-                    } else {
-                        showNotification('This episode is not available yet');
-                    }
+                    navigateToEpisode(i, currentServer);
                 });
                 
                 grid.appendChild(button);
@@ -1055,29 +992,21 @@
         
         // Download current episode
         function downloadCurrentEpisode() {
-            if (!currentAnime || !allEpisodes) return;
+            if (!currentAnime) return;
             
-            const episode = allEpisodes.find(ep => ep.episodeNumber === currentEpisode);
-            if (!episode || !episode.sources) {
-                showNotification('No download source available');
-                return;
-            }
-            
-            // Get source URL
-            const sourceUrl = episode.sources[`server${currentServer}`];
-            if (!sourceUrl) {
-                showNotification(`No source available for Server ${currentServer}`);
-                return;
-            }
+            // Direct URL for the episode based on server
+            const videoUrl = `/api/animes/${currentAnime.id}/episodes/${currentEpisode}/server/${currentServer}`;
             
             // Create a temporary anchor element to trigger download
             const link = document.createElement('a');
-            link.href = sourceUrl;
+            link.href = videoUrl;
             link.download = `${currentAnime.title} - Episode ${currentEpisode}.mp4`;
             link.target = '_blank';
             document.body.appendChild(link);
             link.click();
             document.body.removeChild(link);
+            
+            showNotification('Download started');
         }
         
         // Share episode
