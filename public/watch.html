@@ -132,6 +132,42 @@
             transform: translateY(20px);
             opacity: 0;
         }
+        /* Live Chat Styles */
+        .chat-container {
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+        }
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .live-badge {
+            width: 8px;
+            height: 8px;
+            background-color: red;
+            border-radius: 50%;
+            display: inline-block;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .coming-soon-badge {
+            background-color: #EEF2FF;
+            color: #4F46E5;
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 12px;
+            white-space: nowrap;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -142,13 +178,8 @@
                 <a href="index.html" class="text-lg font-bold text-indigo-600 flex items-center">
                     <i data-feather="arrow-left" class="h-5 w-5 mr-2"></i>
                     ANIME TAGALOG
+                    <span class="ml-2 px-1.5 py-0.5 bg-gray-100 text-gray-500 text-xs rounded">v1.0</span>
                 </a>
-                <div class="flex gap-2">
-                    <button id="toggleAutoplayBtn" class="text-gray-500 hover:text-indigo-600 flex items-center text-sm px-2 py-1 border rounded-md border-gray-200">
-                        <i data-feather="play-circle" class="h-4 w-4 mr-1"></i>
-                        <span class="hidden sm:inline">Autoplay</span>
-                    </button>
-                </div>
             </div>
         </div>
     </div>
@@ -267,6 +298,7 @@
                     <div class="mt-2 flex flex-wrap gap-1">
                         <button id="downloadBtn" class="w-full py-1 px-2 text-xs bg-gray-100 hover:bg-gray-200 rounded flex items-center justify-center">
                             <i data-feather="download" class="h-3 w-3 mr-1"></i> Download
+                            <span class="coming-soon-badge ml-1">COMING SOON</span>
                         </button>
                         <button id="shareBtn" class="w-full py-1 px-2 text-xs bg-gray-100 hover:bg-gray-200 rounded flex items-center justify-center">
                             <i data-feather="share-2" class="h-3 w-3 mr-1"></i> Share
@@ -326,6 +358,27 @@
                 </div>
             </div>
         </div>
+        
+        <!-- Live Chat Integration -->
+        <div class="mb-3">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div class="flex items-center">
+                        <div class="live-badge"></div>
+                        <b style="margin: 1px 0 0 3px; color:red;">Live Chat / Request</b>
+                    </div>
+                    <div class="text-xs text-zinc-400">
+                        <i data-feather="users" class="h-3 w-3 inline"></i>
+                        <span id="chat-user-count">--</span> online
+                    </div>
+                </div>
+                <div>
+                    <script async="async" data-cfasync="false" id="cid0020000402087194787" src="//st.chatango.com/js/gz/emb.js" style="width: 100%; height: 250px;">
+                        {"handle":"animefaiyazzz","arch":"js","styles":{"a":"222222","b":100,"c":"FFFFFF","d":"FFFFFF","k":"222222","l":"222222","m":"222222","n":"FFFFFF","p":"10","q":"222222","r":100,"ab":false,"surl":0,"cnrs":"0.35"}}
+                    </script>
+                </div>
+            </div>
+        </div>
     </div>
 
     <!-- Notification container (for showing alerts) -->
@@ -372,7 +425,6 @@
             
             // Setup UI elements and event listeners
             document.getElementById('autoplayToggle').checked = autoplayEnabled;
-            document.getElementById('toggleAutoplayBtn').classList.toggle('bg-indigo-100', autoplayEnabled);
             if (autoNextEnabled) {
                 document.getElementById('autoNextBtn').classList.add('active');
             }
@@ -381,7 +433,19 @@
             
             // Update episode label
             document.getElementById('episodeLabel').textContent = `Episode ${currentEpisode}`;
+            
+            // Initialize chat user count
+            simulateChatUserCount();
         });
+        
+        // Simulate chat user count
+        function simulateChatUserCount() {
+            const count = Math.floor(Math.random() * 50) + 10; // Random between 10-60
+            document.getElementById('chat-user-count').textContent = count;
+            
+            // Update every 30-60 seconds
+            setTimeout(simulateChatUserCount, Math.random() * 30000 + 30000);
+        }
 
         // Load anime details
         function loadAnimeDetails(animeId) {
@@ -617,18 +681,9 @@
                 loadEpisodeVideo(currentEpisode, currentServer);
             });
             
-            // Autoplay toggle in header
-            document.getElementById('toggleAutoplayBtn').addEventListener('click', function() {
-                autoplayEnabled = !autoplayEnabled;
-                this.classList.toggle('bg-indigo-100', autoplayEnabled);
-                document.getElementById('autoplayToggle').checked = autoplayEnabled;
-                localStorage.setItem('autoplayEnabled', autoplayEnabled);
-            });
-            
             // Autoplay toggle checkbox
             document.getElementById('autoplayToggle').addEventListener('change', function() {
                 autoplayEnabled = this.checked;
-                document.getElementById('toggleAutoplayBtn').classList.toggle('bg-indigo-100', autoplayEnabled);
                 localStorage.setItem('autoplayEnabled', autoplayEnabled);
             });
             
@@ -708,9 +763,9 @@
                 window.history.pushState({}, '', url);
             });
             
-            // Download buttons
+            // Download button
             document.getElementById('downloadBtn').addEventListener('click', function() {
-                downloadCurrentEpisode();
+                showNotification('Download functionality coming soon!');
             });
             
             // Share button
@@ -988,25 +1043,6 @@
                     btn.style.display = 'none';
                 }
             });
-        }
-        
-        // Download current episode
-        function downloadCurrentEpisode() {
-            if (!currentAnime) return;
-            
-            // Direct URL for the episode based on server
-            const videoUrl = `/api/animes/${currentAnime.id}/episodes/${currentEpisode}/server/${currentServer}`;
-            
-            // Create a temporary anchor element to trigger download
-            const link = document.createElement('a');
-            link.href = videoUrl;
-            link.download = `${currentAnime.title} - Episode ${currentEpisode}.mp4`;
-            link.target = '_blank';
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            showNotification('Download started');
         }
         
         // Share episode
