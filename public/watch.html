@@ -127,6 +127,15 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        .notification {
+            transition: all 0.3s ease;
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .notification.hide {
+            transform: translateY(20px);
+            opacity: 0;
+        }
     </style>
 </head>
 <body class="bg-gray-100">
@@ -139,13 +148,9 @@
                     ANIME TAGALOG
                 </a>
                 <div class="flex gap-2">
-                    <button id="shareButton" class="text-gray-500 hover:text-indigo-600 flex items-center text-sm">
-                        <i data-feather="share-2" class="h-4 w-4 mr-1"></i>
-                        <span class="hidden sm:inline">Share</span>
-                    </button>
-                    <button id="downloadButton" class="text-gray-500 hover:text-indigo-600 flex items-center text-sm">
-                        <i data-feather="download" class="h-4 w-4 mr-1"></i>
-                        <span class="hidden sm:inline">Download</span>
+                    <button id="toggleAutoplayBtn" class="text-gray-500 hover:text-indigo-600 flex items-center text-sm px-2 py-1 border rounded-md border-gray-200">
+                        <i data-feather="play-circle" class="h-4 w-4 mr-1"></i>
+                        <span class="hidden sm:inline">Autoplay</span>
                     </button>
                 </div>
             </div>
@@ -156,10 +161,10 @@
         <!-- Video Player Section -->
         <div id="videoSection" class="mb-4">
             <!-- Video thumbnail (shown before video loads) -->
-            <div id="videoThumbnail" class="relative rounded-lg overflow-hidden shadow-lg">
+            <div id="videoThumbnail" class="relative rounded-lg overflow-hidden shadow-lg group">
                 <img src="/api/placeholder/800/450" alt="Video Thumbnail" class="w-full h-auto object-cover">
-                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30">
-                    <button id="playThumbnail" class="bg-indigo-600 text-white p-4 rounded-full hover:bg-indigo-700 transition transform hover:scale-105">
+                <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-30 group-hover:bg-opacity-40 transition">
+                    <button id="playThumbnail" class="bg-indigo-600 text-white p-4 rounded-full hover:bg-indigo-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <i data-feather="play" class="h-8 w-8"></i>
                     </button>
                 </div>
@@ -168,6 +173,15 @@
                 </div>
                 <div class="absolute top-4 left-4 bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                     <span id="episodeLabel">Episode 1</span>
+                </div>
+                <!-- Server selector overlay (visible at bottom left corner of thumbnail) -->
+                <div class="absolute bottom-4 left-4 flex items-center gap-2">
+                    <div class="bg-black bg-opacity-70 rounded-full px-3 py-1">
+                        <select id="thumbnailServerSelector" class="bg-transparent text-white text-xs border-none focus:outline-none focus:ring-0">
+                            <option value="1">Server 1</option>
+                            <option value="2">Server 2</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             
@@ -185,10 +199,12 @@
         <div class="bg-white shadow-sm p-3 mb-3 rounded-lg">
             <div class="flex flex-wrap items-center justify-between gap-2">
                 <div class="flex items-center gap-2">
-                    <label class="inline-flex items-center cursor-pointer">
-                        <input type="checkbox" id="autoplayToggle" class="form-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                        <span class="text-xs text-gray-700 ml-1">Autoplay</span>
-                    </label>
+                    <div class="flex items-center">
+                        <label class="inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="autoplayToggle" class="form-checkbox h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
+                            <span class="text-xs text-gray-700 ml-1">Autoplay</span>
+                        </label>
+                    </div>
                     
                     <button id="autoNextBtn" class="control-btn text-xs">
                         <i data-feather="skip-forward" class="h-3 w-3 mr-1"></i> Auto Next
@@ -249,12 +265,14 @@
             <h2 id="episodeTitle" class="text-lg font-semibold mb-1">Episode 1</h2>
             <div class="mb-2 flex flex-wrap items-center text-xs text-gray-500 gap-2">
                 <span id="episodeDate">Loading...</span>
-                <button id="episodeDownloadBtn" class="flex items-center hover:text-indigo-600 focus:outline-none">
-                    <i data-feather="download" class="h-3 w-3 mr-1"></i> Download
-                </button>
-                <button id="episodeShareBtn" class="flex items-center hover:text-indigo-600 focus:outline-none">
-                    <i data-feather="share-2" class="h-3 w-3 mr-1"></i> Share
-                </button>
+                <div class="flex items-center gap-2">
+                    <button id="episodeDownloadBtn" class="flex items-center hover:text-indigo-600 focus:outline-none">
+                        <i data-feather="download" class="h-3 w-3 mr-1"></i> Download
+                    </button>
+                    <button id="episodeShareBtn" class="flex items-center hover:text-indigo-600 focus:outline-none">
+                        <i data-feather="share-2" class="h-3 w-3 mr-1"></i> Share
+                    </button>
+                </div>
             </div>
             <p id="episodeDescription" class="text-sm text-gray-600 mb-3">
                 Loading episode information...
@@ -262,7 +280,7 @@
             
             <div class="text-xs text-yellow-600 flex items-center mt-2 bg-yellow-50 p-2 rounded-md">
                 <i data-feather="alert-circle" class="h-3 w-3 mr-1"></i>
-                If the player doesn't work or keeps buffering, try changing the server or refreshing the page.
+                If the player doesn't work, try changing to Server 2 or refreshing the page.
             </div>
         </div>
         
@@ -328,6 +346,9 @@
         </div>
     </div>
 
+    <!-- Notification container (for showing alerts) -->
+    <div id="notificationContainer" class="fixed bottom-4 right-4 z-50"></div>
+
     <script>
         let player;
         let currentAnime = null;
@@ -336,6 +357,7 @@
         let allEpisodes = [];
         let autoplayEnabled = localStorage.getItem('autoplayEnabled') === 'true';
         let autoNextEnabled = localStorage.getItem('autoNextEnabled') === 'true';
+        let playerInitialized = false;
         
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
@@ -358,6 +380,12 @@
                 if (serverParam && (serverParam === '1' || serverParam === '2')) {
                     currentServer = parseInt(serverParam);
                     document.getElementById('serverSelector').value = serverParam;
+                    document.getElementById('thumbnailServerSelector').value = serverParam;
+                } else {
+                    // Default to server 2 if no server specified
+                    currentServer = 2;
+                    document.getElementById('serverSelector').value = '2';
+                    document.getElementById('thumbnailServerSelector').value = '2';
                 }
             } else {
                 showError('No anime selected. Please select an anime from the home page.');
@@ -365,6 +393,7 @@
             
             // Setup UI elements and event listeners
             document.getElementById('autoplayToggle').checked = autoplayEnabled;
+            document.getElementById('toggleAutoplayBtn').classList.toggle('bg-indigo-100', autoplayEnabled);
             if (autoNextEnabled) {
                 document.getElementById('autoNextBtn').classList.add('active');
             }
@@ -453,6 +482,13 @@
                     
                     // Load related anime
                     loadRelatedAnime(animeId);
+
+                    // Auto-play if enabled
+                    if (autoplayEnabled) {
+                        setTimeout(() => {
+                            document.getElementById('playThumbnail').click();
+                        }, 500);
+                    }
                 })
                 .catch(error => {
                     console.error('Error loading anime details:', error);
@@ -553,6 +589,7 @@
                 })
                 .catch(error => {
                     console.error('Error loading episodes:', error);
+                    showNotification('Failed to load episodes. Please try refreshing the page.');
                 });
         }
 
@@ -587,18 +624,25 @@
                 
                 // Enable or disable download button based on whether a source is available
                 const downloadBtn = document.getElementById('episodeDownloadBtn');
-                const downloadButton = document.getElementById('downloadButton');
                 
                 if (episode.sources && (episode.sources.server1 || episode.sources.server2)) {
                     downloadBtn.classList.remove('opacity-50', 'cursor-not-allowed');
                     downloadBtn.disabled = false;
-                    downloadButton.classList.remove('opacity-50', 'cursor-not-allowed');
-                    downloadButton.disabled = false;
                 } else {
                     downloadBtn.classList.add('opacity-50', 'cursor-not-allowed');
                     downloadBtn.disabled = true;
-                    downloadButton.classList.add('opacity-50', 'cursor-not-allowed');
-                    downloadButton.disabled = true;
+                }
+                
+                // Check if we have server2 and prefer it if available
+                if (episode.sources && episode.sources.server2 && currentServer === 1) {
+                    // Automatically switch to server 2 if it's available
+                    currentServer = 2;
+                    document.getElementById('serverSelector').value = '2';
+                    document.getElementById('thumbnailServerSelector').value = '2';
+                    
+                    if (playerInitialized) {
+                        loadEpisodeVideo(currentEpisode, currentServer);
+                    }
                 }
             }
         }
@@ -613,9 +657,18 @@
                 loadEpisodeVideo(currentEpisode, currentServer);
             });
             
-            // Autoplay toggle
+            // Autoplay toggle in header
+            document.getElementById('toggleAutoplayBtn').addEventListener('click', function() {
+                autoplayEnabled = !autoplayEnabled;
+                this.classList.toggle('bg-indigo-100', autoplayEnabled);
+                document.getElementById('autoplayToggle').checked = autoplayEnabled;
+                localStorage.setItem('autoplayEnabled', autoplayEnabled);
+            });
+            
+            // Autoplay toggle checkbox
             document.getElementById('autoplayToggle').addEventListener('change', function() {
                 autoplayEnabled = this.checked;
+                document.getElementById('toggleAutoplayBtn').classList.toggle('bg-indigo-100', autoplayEnabled);
                 localStorage.setItem('autoplayEnabled', autoplayEnabled);
             });
             
@@ -671,7 +724,9 @@
             // Server selector
             document.getElementById('serverSelector').addEventListener('change', function() {
                 currentServer = parseInt(this.value);
-                if (player) {
+                document.getElementById('thumbnailServerSelector').value = this.value;
+                
+                if (playerInitialized) {
                     loadEpisodeVideo(currentEpisode, currentServer);
                 }
                 
@@ -681,22 +736,56 @@
                 window.history.pushState({}, '', url);
             });
             
-            // Download buttons
+            // Thumbnail server selector
+            document.getElementById('thumbnailServerSelector').addEventListener('change', function() {
+                currentServer = parseInt(this.value);
+                document.getElementById('serverSelector').value = this.value;
+                
+                // Update URL without reloading page
+                const url = new URL(window.location);
+                url.searchParams.set('server', currentServer);
+                window.history.pushState({}, '', url);
+            });
+            
+            // Download button
             document.getElementById('episodeDownloadBtn').addEventListener('click', function() {
                 downloadCurrentEpisode();
             });
             
-            document.getElementById('downloadButton').addEventListener('click', function() {
-                downloadCurrentEpisode();
-            });
-            
-            // Share buttons
+            // Share button
             document.getElementById('episodeShareBtn').addEventListener('click', function() {
                 shareEpisode();
             });
             
-            document.getElementById('shareButton').addEventListener('click', function() {
-                shareEpisode();
+            // Key navigation
+            document.addEventListener('keydown', function(e) {
+                // Arrow left: Previous episode
+                if (e.key === 'ArrowLeft' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+                    if (currentEpisode > 1) {
+                        navigateToEpisode(currentEpisode - 1, currentServer);
+                    }
+                }
+                
+                // Arrow right: Next episode
+                if (e.key === 'ArrowRight' && !e.ctrlKey && !e.altKey && !e.shiftKey) {
+                    if (currentAnime && currentEpisode < currentAnime.episodes) {
+                        navigateToEpisode(currentEpisode + 1, currentServer);
+                    }
+                }
+                
+                // Number 1: Server 1
+                if (e.key === '1' && !playerInitialized) {
+                    currentServer = 1;
+                    document.getElementById('serverSelector').value = '1';
+                    document.getElementById('thumbnailServerSelector').value = '1';
+                }
+                
+                // Number 2: Server 2
+                if (e.key === '2' && !playerInitialized) {
+                    currentServer = 2;
+                    document.getElementById('serverSelector').value = '2';
+                    document.getElementById('thumbnailServerSelector').value = '2';
+                }
             });
         }
 
@@ -708,8 +797,11 @@
                     'volume', 'captions', 'settings', 'pip', 'airplay', 'fullscreen'
                 ],
                 settings: ['captions', 'quality', 'speed', 'loop'],
-                keyboard: { focused: true, global: true }
+                keyboard: { focused: true, global: true },
+                autoplay: autoplayEnabled
             });
+            
+            playerInitialized = true;
             
             // Handle auto-next when video ends
             player.on('ended', function() {
@@ -727,41 +819,50 @@
             });
             
             // Handle errors
-            player.on('error', function() {
-                console.error('Video playback error. Trying fallback server...');
+            player.on('error', function(event) {
+                console.error('Video playback error. Trying fallback server...', event);
+                
+                // Get the current episode
+                const episode = allEpisodes.find(ep => ep.episodeNumber === currentEpisode);
                 
                 // Try alternate server if current one fails
-                if (currentServer === 1 && hasServer2Source(currentEpisode)) {
+                if (currentServer === 1 && episode && episode.sources && episode.sources.server2) {
                     currentServer = 2;
                     document.getElementById('serverSelector').value = '2';
+                    document.getElementById('thumbnailServerSelector').value = '2';
                     loadEpisodeVideo(currentEpisode, currentServer);
                     
                     // Show notification
-                    showNotification('Server 1 failed. Switching to Server 2...');
+                    showNotification('Server 1 failed. Switched to Server 2 automatically.');
+                } else if (currentServer === 2 && episode && episode.sources && episode.sources.server1) {
+                    currentServer = 1;
+                    document.getElementById('serverSelector').value = '1';
+                    document.getElementById('thumbnailServerSelector').value = '1';
+                    loadEpisodeVideo(currentEpisode, currentServer);
+                    
+                    // Show notification
+                    showNotification('Server 2 failed. Switched to Server 1 automatically.');
+                } else {
+                    showNotification('Video playback error. Please try a different server or episode.');
                 }
             });
-        }
-        
-        // Check if episode has server2 source
-        function hasServer2Source(episodeNumber) {
-            const episode = allEpisodes.find(ep => ep.episodeNumber === episodeNumber);
-            return episode && episode.sources && episode.sources.server2;
         }
         
         // Show notification message
         function showNotification(message) {
             // Create notification element
             const notification = document.createElement('div');
-            notification.className = 'fixed bottom-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition transform translate-y-0';
+            notification.className = 'fixed bottom-4 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 notification';
             notification.textContent = message;
             
-            document.body.appendChild(notification);
+            const container = document.getElementById('notificationContainer');
+            container.appendChild(notification);
             
             // Remove after 3 seconds
             setTimeout(() => {
-                notification.classList.add('translate-y-20', 'opacity-0');
+                notification.classList.add('hide');
                 setTimeout(() => {
-                    document.body.removeChild(notification);
+                    container.removeChild(notification);
                 }, 300);
             }, 3000);
         }
@@ -769,6 +870,32 @@
         // Load episode video
         function loadEpisodeVideo(episodeNumber, serverNumber) {
             if (!currentAnime) return;
+            
+            const episode = allEpisodes.find(ep => ep.episodeNumber === episodeNumber);
+            if (!episode || !episode.sources) {
+                showNotification('Episode not available');
+                return;
+            }
+            
+            // Check which server to use
+            const serverKey = `server${serverNumber}`;
+            if (!episode.sources[serverKey]) {
+                // Try the alternate server if current one doesn't exist
+                const altServerNumber = serverNumber === 1 ? 2 : 1;
+                const altServerKey = `server${altServerNumber}`;
+                
+                if (episode.sources[altServerKey]) {
+                    // Switch server
+                    currentServer = altServerNumber;
+                    document.getElementById('serverSelector').value = altServerNumber.toString();
+                    document.getElementById('thumbnailServerSelector').value = altServerNumber.toString();
+                    showNotification(`Server ${serverNumber} not available. Switched to Server ${altServerNumber}.`);
+                    serverNumber = altServerNumber;
+                } else {
+                    showNotification('No video source available for this episode');
+                    return;
+                }
+            }
             
             const videoUrl = `/api/animes/${currentAnime.id}/episodes/${episodeNumber}/server/${serverNumber}`;
             
@@ -787,9 +914,12 @@
                     ]
                 };
                 
-                // Autoplay if enabled
+                // Autoplay
                 if (autoplayEnabled) {
-                    setTimeout(() => player.play(), 300);
+                    player.play().catch(error => {
+                        console.error('Autoplay was prevented:', error);
+                        showNotification('Autoplay was blocked by your browser. Please click play to start video.');
+                    });
                 }
             } else {
                 // If player not initialized yet
@@ -798,6 +928,9 @@
             
             // Update episode info
             updateEpisodeInfo(episodeNumber);
+            
+            // Update page title
+            document.title = `${currentAnime.title} - Episode ${episodeNumber} - Anime Tagalog`;
         }
 
         // Navigate to episode
@@ -811,13 +944,18 @@
             url.searchParams.set('server', serverNumber);
             window.history.pushState({}, '', url);
             
-            // Update document title
-            if (currentAnime) {
-                document.title = `${currentAnime.title} - Episode ${episodeNumber} - Anime Tagalog`;
-            }
-            
             // Load the video
-            loadEpisodeVideo(episodeNumber, serverNumber);
+            if (playerInitialized) {
+                loadEpisodeVideo(episodeNumber, serverNumber);
+            } else {
+                // Update episode label
+                document.getElementById('episodeLabel').textContent = `Episode ${episodeNumber}`;
+                // If player isn't initialized, we'll update episode info
+                const episode = allEpisodes.find(ep => ep.episodeNumber === episodeNumber);
+                if (episode) {
+                    updateEpisodeInfo(episodeNumber);
+                }
+            }
             
             // Check if the episode is in the current range
             const select = document.getElementById('episodeRangeSelect');
