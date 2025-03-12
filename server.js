@@ -569,6 +569,212 @@ app.post('/api/animes/:id/episodes/upload', upload.single('video'), (req, res) =
     }
 });
 
+// Batch add episodes
+app.post('/api/animes/:id/episodes/batch', (req, res) => {
+    const animeId = parseInt(req.params.id);
+    const animes = readAnimes();
+    
+    // Check if anime exists
+    const animeIndex = animes.findIndex(a => a.id === animeId);
+    if (animeIndex === -1) {
+        return res.status(404).json({ error: 'Anime not found' });
+    }
+    
+    const episodes = readEpisodes(animeId);
+    const { episodeLinks, basePattern, startEpisode, totalEpisodes, server } = req.body;
+    const addedEpisodes = [];
+    const serverKey = server || 'server1';
+    
+    if (episodeLinks && episodeLinks.trim()) {
+        // Process a list of links
+        const links = episodeLinks.split('\n')
+            .map(link => link.trim())
+            .filter(link => link);
+        
+        for (let i = 0; i < links.length; i++) {
+            const episodeNumber = startEpisode + i;
+            
+            // Check if episode already exists
+            const existingEpisodeIndex = episodes.findIndex(ep => ep.episodeNumber === episodeNumber);
+            
+            if (existingEpisodeIndex !== -1) {
+                // Update existing episode
+                episodes[existingEpisodeIndex].sources = {
+                    ...episodes[existingEpisodeIndex].sources,
+                    [serverKey]: links[i]
+                };
+                addedEpisodes.push(episodes[existingEpisodeIndex]);
+            } else {
+                // Create new episode
+                const newEpisode = {
+                    episodeNumber: episodeNumber,
+                    title: `Episode ${episodeNumber}`,
+                    description: '',
+                    sources: {
+                        [serverKey]: links[i]
+                    },
+                    dateAdded: new Date().toISOString()
+                };
+                
+                episodes.push(newEpisode);
+                addedEpisodes.push(newEpisode);
+            }
+        }
+    } else if (basePattern && totalEpisodes) {
+        // Process a pattern-based batch
+        for (let i = 0; i < totalEpisodes; i++) {
+            const episodeNumber = startEpisode + i;
+            const episodeLink = basePattern.replace('{episode}', episodeNumber);
+            
+            // Check if episode already exists
+            const existingEpisodeIndex = episodes.findIndex(ep => ep.episodeNumber === episodeNumber);
+            
+            if (existingEpisodeIndex !== -1) {
+                // Update existing episode
+                episodes[existingEpisodeIndex].sources = {
+                    ...episodes[existingEpisodeIndex].sources,
+                    [serverKey]: episodeLink
+                };
+                addedEpisodes.push(episodes[existingEpisodeIndex]);
+            } else {
+                // Create new episode
+                const newEpisode = {
+                    episodeNumber: episodeNumber,
+                    title: `Episode ${episodeNumber}`,
+                    description: '',
+                    sources: {
+                        [serverKey]: episodeLink
+                    },
+                    dateAdded: new Date().toISOString()
+                };
+                
+                episodes.push(newEpisode);
+                addedEpisodes.push(newEpisode);
+            }
+        }
+    } else {
+        return res.status(400).json({ error: 'Invalid input for batch episode addition' });
+    }
+    
+    // Sort episodes by episodeNumber
+    episodes.sort((a, b) => a.episodeNumber - b.episodeNumber);
+    
+    if (writeEpisodes(animeId, episodes)) {
+        // Update the episodes count and current episode in the anime record
+        animes[animeIndex].episodes = Math.max(animes[animeIndex].episodes || 0, episodes.length);
+        animes[animeIndex].currentEpisode = episodes.length;
+        writeAnimes(animes);
+        
+        res.status(201).json({ 
+            success: true, 
+            message: `Added/updated ${addedEpisodes.length} episodes`,
+            episodes: addedEpisodes
+        });
+    } else {
+        res.status(500).json({ error: 'Failed to add batch episodes' });
+    }
+});
+
+// Parse and add episodes from HTML select
+app.post('/api/animes/:id/episodes/parse-select', (req, res) => {
+    const animeId = parseInt(req.params.id);
+    const animes = readAnimes();
+    
+    // Check if anime exists
+    const animeIndex = animes.findIndex(a => a.id === animeId);
+    if (animeIndex === -1) {
+        return res.status(404).json({ error: 'Anime not found' });
+    }
+    
+    const episodes = readEpisodes(animeId);
+    const { selectHtml } = req.body;
+    
+    if (!selectHtml || !selectHtml.trim()) {
+        return res.status(400).json({ error: 'Select HTML content is required' });
+    }
+    
+    try {
+        // Basic parsing of the select HTML to extract options
+        const optionRegex = /<option[^>]*value="(\d+)"[^>]*data-server1="([^"]*)"[^>]*data-server2="([^"]*)"[^>]*>[^<]*<\/option>/g;
+        const parsedEpisodes = [];
+        let match;
+        
+        while ((match = optionRegex.exec(selectHtml)) !== null) {
+            const episodeNumber = parseInt(match[1]);
+            const server1Url = match[2] === "LINK1" ? "" : match[2];
+            const server2Url = match[3].replace(/\*\*/g, ""); // Remove ** if present
+            
+            parsedEpisodes.push({
+                episodeNumber,
+                server1: server1Url,
+                server2: server2Url
+            });
+        }
+        
+        if (parsedEpisodes.length === 0) {
+            return res.status(400).json({ error: 'No valid episodes found in the provided HTML' });
+        }
+        
+        // Add or update episodes
+        const addedEpisodes = [];
+        
+        for (const parsedEp of parsedEpisodes) {
+            const existingEpisodeIndex = episodes.findIndex(ep => ep.episodeNumber === parsedEp.episodeNumber);
+            
+            if (existingEpisodeIndex !== -1) {
+                // Update existing episode
+                episodes[existingEpisodeIndex].sources = {
+                    ...episodes[existingEpisodeIndex].sources
+                };
+                if (parsedEp.server1) {
+                    episodes[existingEpisodeIndex].sources.server1 = parsedEp.server1;
+                }
+                if (parsedEp.server2) {
+                    episodes[existingEpisodeIndex].sources.server2 = parsedEp.server2;
+                }
+                addedEpisodes.push(episodes[existingEpisodeIndex]);
+            } else {
+                // Create new episode
+                const sources = {};
+                if (parsedEp.server1) sources.server1 = parsedEp.server1;
+                if (parsedEp.server2) sources.server2 = parsedEp.server2;
+                
+                const newEpisode = {
+                    episodeNumber: parsedEp.episodeNumber,
+                    title: `Episode ${parsedEp.episodeNumber}`,
+                    description: '',
+                    sources,
+                    dateAdded: new Date().toISOString()
+                };
+                
+                episodes.push(newEpisode);
+                addedEpisodes.push(newEpisode);
+            }
+        }
+        
+        // Sort episodes by episodeNumber
+        episodes.sort((a, b) => a.episodeNumber - b.episodeNumber);
+        
+        if (writeEpisodes(animeId, episodes)) {
+            // Update the episodes count and current episode in the anime record
+            animes[animeIndex].episodes = Math.max(animes[animeIndex].episodes || 0, episodes.length);
+            animes[animeIndex].currentEpisode = episodes.length;
+            writeAnimes(animes);
+            
+            res.status(201).json({ 
+                success: true, 
+                message: `Added/updated ${addedEpisodes.length} episodes`,
+                episodes: addedEpisodes
+            });
+        } else {
+            res.status(500).json({ error: 'Failed to add parsed episodes' });
+        }
+    } catch (error) {
+        console.error('Error parsing select HTML:', error);
+        res.status(500).json({ error: 'Failed to parse select HTML' });
+    }
+});
+
 // Get related anime
 app.get('/api/animes/:id/related', (req, res) => {
     const animeId = parseInt(req.params.id);
@@ -591,13 +797,13 @@ app.get('/api/animes/:id/related', (req, res) => {
                 anime.genres.some(genre => currentAnime.genres.includes(genre))
             )
             .sort((a, b) => {
-                // Count matching genres
-                const aMatches = a.genres.filter(genre => currentAnime.genres.includes(genre)).length;
-                const bMatches = b.genres.filter(genre => currentAnime.genres.includes(genre)).length;
-                
-                return bMatches - aMatches;
-            })
-            .slice(0, 5); // Get top 5 related
+    // Count matching genres
+    const aMatches = a.genres.filter(genre => currentAnime.genres.includes(genre)).length;
+    const bMatches = b.genres.filter(genre => currentAnime.genres.includes(genre)).length;
+    
+    return bMatches - aMatches;
+})
+.slice(0, 5); // Get top 5 related
     }
     
     // Add defaults for views and type if they don't exist
