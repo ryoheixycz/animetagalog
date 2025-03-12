@@ -12,10 +12,10 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #f7f7f7;
+            background-color: #f9fafb;
         }
         .episode-btn {
-            background-color: #f0f0f0;
+            background-color: #f3f4f6;
             color: #333;
             transition: all 0.2s ease;
             text-align: center;
@@ -26,7 +26,7 @@
             justify-content: center;
         }
         .episode-btn:hover {
-            background-color: #e5e5e5;
+            background-color: #e5e7eb;
         }
         .episode-btn.active {
             background-color: #4f46e5;
@@ -38,7 +38,7 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
         .control-btn {
-            background-color: #f0f0f0;
+            background-color: #f3f4f6;
             color: #333;
             padding: 5px 10px;
             border-radius: 4px;
@@ -48,7 +48,7 @@
             transition: all 0.2s ease;
         }
         .control-btn:hover {
-            background-color: #e5e5e5;
+            background-color: #e5e7eb;
         }
         .control-btn.active {
             background-color: #4f46e5;
@@ -141,16 +141,16 @@
         }
         .chat-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            padding: 10px 15px;
+            padding: 10px;
             background-color: #f9fafb;
-            border-bottom: 1px solid #e5e7eb;
+            border-bottom: 1px solid #f3f4f6;
         }
         .live-badge {
             width: 8px;
             height: 8px;
-            background-color: red;
+            background-color: #ef4444;
             border-radius: 50%;
             display: inline-block;
             animation: pulse 1.5s infinite;
@@ -168,9 +168,15 @@
             border-radius: 12px;
             white-space: nowrap;
         }
+        .related-anime-item {
+            transition: all 0.2s ease;
+        }
+        .related-anime-item:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="bg-gray-50">
     <!-- Simple Header -->
     <div class="bg-white shadow-sm sticky top-0 z-50">
         <div class="container mx-auto px-4 py-3">
@@ -188,14 +194,14 @@
         <!-- Video Player Section -->
         <div id="videoSection" class="mb-4">
             <!-- Video thumbnail (shown before video loads) -->
-            <div id="videoThumbnail" class="relative rounded-lg overflow-hidden shadow-lg group cursor-pointer">
+            <div id="videoThumbnail" class="relative rounded-lg overflow-hidden shadow-sm group cursor-pointer">
                 <img src="/api/placeholder/800/450" alt="Video Thumbnail" class="w-full h-auto object-cover">
                 <div class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-40 group-hover:bg-opacity-50 transition">
                     <button id="playThumbnail" class="bg-indigo-600 text-white p-4 rounded-full hover:bg-indigo-700 transition transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
                         <i data-feather="play" class="h-8 w-8"></i>
                     </button>
                 </div>
-                <div class="absolute bottom-4 right-4 bg-black bg-opacity-70 text-white px-3 py-1 rounded-full text-sm font-medium">
+                <div class="absolute bottom-4 right-4 bg-black bg-opacity-60 text-white px-3 py-1 rounded-full text-sm font-medium">
                     <span id="videoDuration">Loading...</span>
                 </div>
                 <div class="absolute top-4 left-4 bg-indigo-600 text-white px-3 py-1 rounded-full text-sm font-medium">
@@ -203,7 +209,7 @@
                 </div>
                 <!-- Server selector overlay (visible at bottom left corner of thumbnail) -->
                 <div class="absolute bottom-4 left-4 flex items-center gap-2">
-                    <div class="bg-black bg-opacity-70 rounded-full px-3 py-1">
+                    <div class="bg-black bg-opacity-60 rounded-full px-3 py-1">
                         <select id="thumbnailServerSelector" class="bg-transparent text-white text-xs border-none focus:outline-none focus:ring-0">
                             <option value="1">Server 1</option>
                             <option value="2" selected>Server 2</option>
@@ -214,7 +220,7 @@
             
             <!-- Video player (hidden initially) -->
             <div id="videoPlayerContainer" class="hidden">
-                <video id="player" playsinline controls class="w-full rounded-lg shadow-lg">
+                <video id="player" playsinline controls class="w-full rounded-lg shadow-sm">
                     <source id="videoSource" src="" type="video/mp4">
                     <!-- Fallback for old browsers -->
                     <p>Your browser doesn't support HTML5 video.</p>
@@ -260,13 +266,13 @@
         <!-- Episode Selector -->
         <div class="bg-white shadow-sm p-3 mb-3 rounded-lg">
             <div class="flex flex-col md:flex-row md:items-center gap-2 mb-3">
-                <select id="episodeRangeSelect" class="dropdown-select bg-gray-100 border-0 rounded-md py-2 px-3 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                <select id="episodeRangeSelect" class="dropdown-select bg-gray-50 border-0 rounded-md py-2 px-3 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                     <!-- Will be populated dynamically based on total episodes -->
                 </select>
                 
                 <div class="relative flex-1">
                     <input type="text" placeholder="Filter episodes..." id="filterEpisodes" 
-                          class="w-full bg-gray-100 border-0 rounded-md py-2 px-3 pr-16 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500">
+                          class="w-full bg-gray-50 border-0 rounded-md py-2 px-3 pr-16 text-xs text-gray-700 focus:outline-none focus:ring-1 focus:ring-indigo-500">
                     <div class="absolute right-0 top-0 h-full flex items-center pr-2">
                         <button id="viewListBtn" class="text-gray-500 hover:text-indigo-600 p-1">
                             <i data-feather="list" class="h-4 w-4"></i>
@@ -296,11 +302,11 @@
                     
                     <!-- Quick Actions -->
                     <div class="mt-2 flex flex-wrap gap-1">
-                        <button id="downloadBtn" class="w-full py-1 px-2 text-xs bg-gray-100 hover:bg-gray-200 rounded flex items-center justify-center">
+                        <button id="downloadBtn" class="w-full py-1 px-2 text-xs bg-gray-50 hover:bg-gray-100 rounded flex items-center justify-center">
                             <i data-feather="download" class="h-3 w-3 mr-1"></i> Download
                             <span class="coming-soon-badge ml-1">COMING SOON</span>
                         </button>
-                        <button id="shareBtn" class="w-full py-1 px-2 text-xs bg-gray-100 hover:bg-gray-200 rounded flex items-center justify-center">
+                        <button id="shareBtn" class="w-full py-1 px-2 text-xs bg-gray-50 hover:bg-gray-100 rounded flex items-center justify-center">
                             <i data-feather="share-2" class="h-3 w-3 mr-1"></i> Share
                         </button>
                     </div>
@@ -346,13 +352,13 @@
                         </p>
                     </div>
 
-                    <!-- Related Anime -->
-                    <div class="mt-4 pt-4 border-t border-gray-100">
-                        <h3 class="text-sm font-semibold mb-2">Related Anime</h3>
+                    <!-- Related Anime (more subtle) -->
+                    <div class="mt-4 pt-3 border-t border-gray-100">
+                        <p class="text-xs text-gray-500 mb-2">You might also like:</p>
                         <div id="relatedAnime" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-                            <div class="bg-gray-100 h-12 animate-pulse rounded-md"></div>
-                            <div class="bg-gray-100 h-12 animate-pulse rounded-md"></div>
-                            <div class="bg-gray-100 h-12 animate-pulse rounded-md"></div>
+                            <div class="bg-gray-50 h-10 animate-pulse rounded"></div>
+                            <div class="bg-gray-50 h-10 animate-pulse rounded"></div>
+                            <div class="bg-gray-50 h-10 animate-pulse rounded"></div>
                         </div>
                     </div>
                 </div>
@@ -365,11 +371,7 @@
                 <div class="chat-header">
                     <div class="flex items-center">
                         <div class="live-badge"></div>
-                        <b style="margin: 1px 0 0 3px; color:red;">Live Chat / Request</b>
-                    </div>
-                    <div class="text-xs text-zinc-400">
-                        <i data-feather="users" class="h-3 w-3 inline"></i>
-                        <span id="chat-user-count">--</span> online
+                        <span class="ml-2 text-sm font-medium text-gray-700">Live Chat / Request</span>
                     </div>
                 </div>
                 <div>
@@ -433,19 +435,7 @@
             
             // Update episode label
             document.getElementById('episodeLabel').textContent = `Episode ${currentEpisode}`;
-            
-            // Initialize chat user count
-            simulateChatUserCount();
         });
-        
-        // Simulate chat user count
-        function simulateChatUserCount() {
-            const count = Math.floor(Math.random() * 50) + 10; // Random between 10-60
-            document.getElementById('chat-user-count').textContent = count;
-            
-            // Update every 30-60 seconds
-            setTimeout(simulateChatUserCount, Math.random() * 30000 + 30000);
-        }
 
         // Load anime details
         function loadAnimeDetails(animeId) {
@@ -478,13 +468,13 @@
                     
                     if (data.genres && data.genres.length > 0) {
                         const colors = [
-                            'bg-blue-100 text-blue-800',
-                            'bg-green-100 text-green-800',
-                            'bg-purple-100 text-purple-800',
-                            'bg-red-100 text-red-800',
-                            'bg-yellow-100 text-yellow-800',
-                            'bg-indigo-100 text-indigo-800',
-                            'bg-pink-100 text-pink-800'
+                            'bg-blue-50 text-blue-600',
+                            'bg-green-50 text-green-600',
+                            'bg-purple-50 text-purple-600',
+                            'bg-red-50 text-red-600',
+                            'bg-yellow-50 text-yellow-600',
+                            'bg-indigo-50 text-indigo-600',
+                            'bg-pink-50 text-pink-600'
                         ];
                         
                         data.genres.forEach((genre, index) => {
@@ -553,18 +543,21 @@
                     container.innerHTML = '';
                     
                     if (!related || related.length === 0) {
-                        container.innerHTML = '<p class="text-gray-500 text-sm col-span-full">No related anime found</p>';
+                        container.innerHTML = '<p class="text-gray-500 text-xs col-span-full">No related anime found</p>';
                         return;
                     }
                     
-                    related.forEach(anime => {
+                    // Limit to max 4 related anime
+                    const relatedShown = related.slice(0, 4);
+                    
+                    relatedShown.forEach(anime => {
                         const card = document.createElement('a');
                         card.href = `watch.html?id=${anime.id}`;
-                        card.className = 'flex items-center p-2 bg-gray-50 hover:bg-gray-100 rounded-md transition';
+                        card.className = 'flex items-center p-2 bg-gray-50 hover:bg-gray-100 rounded related-anime-item';
                         
                         card.innerHTML = `
-                            <img src="${anime.poster || '/api/placeholder/60/90'}" alt="${anime.title}" class="h-10 w-6 object-cover mr-2 rounded">
-                            <span class="text-xs font-medium truncate">${anime.title}</span>
+                            <img src="${anime.poster || '/api/placeholder/60/90'}" alt="${anime.title}" class="h-8 w-5 object-cover mr-2 rounded">
+                            <span class="text-xs text-gray-700 truncate">${anime.title}</span>
                         `;
                         
                         container.appendChild(card);
@@ -573,7 +566,7 @@
                 .catch(error => {
                     console.error('Error loading related anime:', error);
                     const container = document.getElementById('relatedAnime');
-                    container.innerHTML = '<p class="text-gray-500 text-sm col-span-full">Could not load related anime</p>';
+                    container.innerHTML = '<p class="text-gray-500 text-xs col-span-full">Could not load related anime</p>';
                 });
         }
 
