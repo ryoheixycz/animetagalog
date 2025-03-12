@@ -7,7 +7,6 @@
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/bcryptjs@2.4.3/dist/bcrypt.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -57,6 +56,7 @@
             padding: 0;
             overflow: hidden;
             display: flex;
+            align-items: center;
         }
         .pagination-button {
             width: 40px;
@@ -212,11 +212,20 @@
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
+        @media (max-width: 640px) {
+            .tab {
+                padding: 10px 20px;
+            }
+            .pagination-button {
+                width: 36px;
+                height: 36px;
+            }
+        }
     </style>
 </head>
 <body class="pb-24 smooth-scroll">
     <!-- Top Navigation -->
-    <nav class="bg-white py-4 px-4 shadow-sm">
+    <nav class="bg-white py-4 px-4 shadow-sm sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
             <a href="index.html" class="text-xl font-bold text-indigo-600 flex items-center">
                 <i data-feather="play-circle" class="mr-2"></i>
@@ -316,14 +325,6 @@
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-4 mt-10 text-center text-sm md:text-base">
-        <div class="container mx-auto px-4">
-            <p>&copy; 2025 Anime Tagalog. All rights reserved.</p>
-            <p class="text-gray-400 mt-1">Powered by Jubiar Marlon</p>
-        </div>
-    </footer>
-
     <!-- Admin Password Modal -->
     <div id="passwordModal" class="modal">
         <div class="modal-content">
@@ -361,9 +362,6 @@
         let trendingAnimes = [];
         let scheduleData = [];
         let itemsPerPage = 12;
-        
-        // Admin password (hashed) - XaneKath
-        const hashedPassword = "$2a$10$HvK2Z4Q6lQlJBtd3/cg.OOgTmNlO5KyIr5jBK1UKrYxBRyNHnzVnG";
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
@@ -418,7 +416,9 @@
             });
             
             // Handle submit password
-            submitPassword.addEventListener('click', validatePassword);
+            submitPassword.addEventListener('click', function() {
+                validatePassword();
+            });
             
             // Allow Enter key to submit password
             passwordInput.addEventListener('keyup', function(e) {
@@ -427,22 +427,20 @@
                 }
             });
             
-            // Validate password function
+            // Validate password function (simple direct comparison for reliability)
             function validatePassword() {
                 const password = passwordInput.value;
                 
-                // Check if password is correct
-                bcrypt.compare(password, hashedPassword, function(err, result) {
-                    if (result) {
-                        // Password is correct
-                        window.location.href = 'admin.html';
-                    } else {
-                        // Password is incorrect
-                        passwordError.classList.remove('hidden');
-                        passwordInput.value = '';
-                        passwordInput.focus();
-                    }
-                });
+                // Direct password check
+                if (password === 'XaneKath') {
+                    // Password is correct
+                    window.location.href = 'admin.html';
+                } else {
+                    // Password is incorrect
+                    passwordError.classList.remove('hidden');
+                    passwordInput.value = '';
+                    passwordInput.focus();
+                }
             }
         }
 
@@ -774,173 +772,173 @@
                                 </div>
                             `;
                         }).join('')}
-    </div>
-`;
-
-container.appendChild(daySection);
-});
-
-feather.replace();
-}
-
-// Render anime cards to container
-function renderAnimeCards(animes, targetContainer = 'animeGrid') {
-    const container = document.getElementById(targetContainer);
-    container.innerHTML = '';
-    
-    if (!animes || animes.length === 0) {
-        container.innerHTML = `
-            <div class="col-span-full flex flex-col items-center justify-center py-8">
-                <i data-feather="film-off" class="mb-2 text-gray-400 h-10 w-10"></i>
-                <p class="text-gray-500">No anime found</p>
-            </div>
-        `;
-        feather.replace();
-        return;
-    }
-    
-    animes.forEach(anime => {
-        container.appendChild(createAnimeCard(anime));
-    });
-    
-    feather.replace();
-}
-
-// Create anime card
-function createAnimeCard(anime) {
-    const card = document.createElement('div');
-    card.className = 'anime-card shadow-sm bg-white relative';
-    
-    const poster = anime.poster || '/api/placeholder/180/270';
-    const title = anime.title || 'Unknown Title';
-    const episodes = anime.episodes || 0;
-    const year = anime.year || new Date().getFullYear();
-    
-    // Determine type badge (TV, ONA, etc.)
-    const type = anime.type || 'TV';
-    
-    // Determine episode or chapter count
-    const epCount = anime.currentEpisode || episodes;
-    const epTotal = episodes || '?';
-    const epDisplay = `${epCount} / ${epTotal}`;
-    
-    // Check if it has CC/subs
-    const hasSubs = anime.hasSubs !== undefined ? anime.hasSubs : true;
-    const subsBadge = hasSubs ? `<span class="badge ml-1"><i data-feather="message-square" class="h-3 w-3 mr-1"></i>CC</span>` : '';
-    
-    // Check if it has audio
-    const hasAudio = anime.hasAudio !== undefined ? anime.hasAudio : true;
-    const audioBadge = hasAudio ? `<span class="badge ml-1"><i data-feather="mic" class="h-3 w-3 mr-1"></i>${epDisplay}</span>` : '';
-    
-    card.innerHTML = `
-        <a href="watch.html?id=${anime.id}" class="block h-full">
-            <div class="relative">
-                <img src="${poster}" alt="${title}" class="poster-image">
-            </div>
-            
-            <div class="p-2">
-                <div class="flex items-start mb-1">
-                    <span class="status-dot mt-1.5"></span>
-                    <h3 class="anime-title text-sm font-medium text-gray-800">${title}</h3>
-                </div>
-                
-                <div class="flex flex-wrap gap-1 mt-1">
-                    <span class="badge">${type}</span>
-                    <span class="badge">${year}</span>
-                    ${subsBadge}
-                    ${audioBadge}
-                </div>
-            </div>
-        </a>
-    `;
-    
-    return card;
-}
-
-// Show error message
-function showErrorMessage(message) {
-    const container = document.getElementById('animeGrid');
-    container.innerHTML = `
-        <div class="col-span-full flex flex-col items-center justify-center py-8 bg-red-50 rounded-lg">
-            <i data-feather="alert-circle" class="mb-2 text-red-500 h-10 w-10"></i>
-            <p class="text-red-600">${message}</p>
-            <button class="mt-3 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" onclick="loadAnimes()">
-                Retry
-            </button>
-        </div>
-    `;
-    feather.replace();
-}
-
-// Show no animes message
-function showNoAnimesMessage() {
-    const container = document.getElementById('animeGrid');
-    container.innerHTML = `
-        <div class="col-span-full flex flex-col items-center justify-center py-8">
-            <i data-feather="film-off" class="mb-2 text-gray-400 h-10 w-10"></i>
-            <p class="text-gray-500">No anime added yet</p>
-        </div>
-    `;
-    feather.replace();
-}
-
-// Search animes
-function searchAnimes(searchTerm) {
-    // Show loading indicator in the search results container
-    const resultsSection = document.getElementById('searchResults');
-    const resultsContainer = document.getElementById('searchResultsContainer');
-    
-    resultsContainer.innerHTML = `
-        <div class="col-span-full flex justify-center items-center py-8">
-            <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
-            <span class="ml-2 text-gray-500">Searching...</span>
-        </div>
-    `;
-    
-    resultsSection.classList.remove('hidden');
-    
-    fetch(`/api/animes/search?q=${encodeURIComponent(searchTerm)}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            resultsContainer.innerHTML = '';
-            
-            if (data.length === 0) {
-                resultsContainer.innerHTML = `
-                    <div class="col-span-full flex flex-col items-center justify-center py-8">
-                        <i data-feather="search" class="mb-2 text-gray-400 h-10 w-10"></i>
-                        <p class="text-gray-500">No results found for "${searchTerm}"</p>
                     </div>
                 `;
-            } else {
-                data.forEach(anime => {
-                    resultsContainer.appendChild(createAnimeCard(anime));
-                });
-            }
+                
+                container.appendChild(daySection);
+            });
             
             feather.replace();
+        }
+
+        // Render anime cards to container
+        function renderAnimeCards(animes, targetContainer = 'animeGrid') {
+            const container = document.getElementById(targetContainer);
+            container.innerHTML = '';
             
-            // Update URL without reloading the page
-            const url = new URL(window.location);
-            url.searchParams.set('search', searchTerm);
-            window.history.pushState({}, '', url);
-        })
-        .catch(error => {
-            console.error('Error searching animes:', error);
-            resultsContainer.innerHTML = `
-                <div class="col-span-full flex flex-col items-center justify-center py-8">
+            if (!animes || animes.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center py-8">
+                        <i data-feather="film-off" class="mb-2 text-gray-400 h-10 w-10"></i>
+                        <p class="text-gray-500">No anime found</p>
+                    </div>
+                `;
+                feather.replace();
+                return;
+            }
+            
+            animes.forEach(anime => {
+                container.appendChild(createAnimeCard(anime));
+            });
+            
+            feather.replace();
+        }
+
+        // Create anime card
+        function createAnimeCard(anime) {
+            const card = document.createElement('div');
+            card.className = 'anime-card shadow-sm bg-white relative';
+            
+            const poster = anime.poster || '/api/placeholder/180/270';
+            const title = anime.title || 'Unknown Title';
+            const episodes = anime.episodes || 0;
+            const year = anime.year || new Date().getFullYear();
+            
+            // Determine type badge (TV, ONA, etc.)
+            const type = anime.type || 'TV';
+            
+            // Determine episode or chapter count
+            const epCount = anime.currentEpisode || episodes;
+            const epTotal = episodes || '?';
+            const epDisplay = `${epCount} / ${epTotal}`;
+            
+            // Check if it has CC/subs
+            const hasSubs = anime.hasSubs !== undefined ? anime.hasSubs : true;
+            const subsBadge = hasSubs ? `<span class="badge ml-1"><i data-feather="message-square" class="h-3 w-3 mr-1"></i>CC</span>` : '';
+            
+            // Check if it has audio
+            const hasAudio = anime.hasAudio !== undefined ? anime.hasAudio : true;
+            const audioBadge = hasAudio ? `<span class="badge ml-1"><i data-feather="mic" class="h-3 w-3 mr-1"></i>${epDisplay}</span>` : '';
+            
+            card.innerHTML = `
+                <a href="watch.html?id=${anime.id}" class="block h-full">
+                    <div class="relative">
+                        <img src="${poster}" alt="${title}" class="poster-image">
+                    </div>
+                    
+                    <div class="p-2">
+                        <div class="flex items-start mb-1">
+                            <span class="status-dot mt-1.5"></span>
+                            <h3 class="anime-title text-sm font-medium text-gray-800">${title}</h3>
+                        </div>
+                        
+                        <div class="flex flex-wrap gap-1 mt-1">
+                            <span class="badge">${type}</span>
+                            <span class="badge">${year}</span>
+                            ${subsBadge}
+                            ${audioBadge}
+                        </div>
+                    </div>
+                </a>
+            `;
+            
+            return card;
+        }
+
+        // Show error message
+        function showErrorMessage(message) {
+            const container = document.getElementById('animeGrid');
+            container.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-8 bg-red-50 rounded-lg">
                     <i data-feather="alert-circle" class="mb-2 text-red-500 h-10 w-10"></i>
-                    <p class="text-red-600">Failed to search. Please try again later.</p>
+                    <p class="text-red-600">${message}</p>
+                    <button class="mt-3 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" onclick="loadAnimes()">
+                        Retry
+                    </button>
+                </div>
+            `;
+            feather.replace();
+        }
+
+        // Show no animes message
+        function showNoAnimesMessage() {
+            const container = document.getElementById('animeGrid');
+            container.innerHTML = `
+                <div class="col-span-full flex flex-col items-center justify-center py-8">
+                    <i data-feather="film-off" class="mb-2 text-gray-400 h-10 w-10"></i>
+                    <p class="text-gray-500">No anime added yet</p>
+                </div>
+            `;
+            feather.replace();
+        }
+
+        // Search animes
+        function searchAnimes(searchTerm) {
+            // Show loading indicator in the search results container
+            const resultsSection = document.getElementById('searchResults');
+            const resultsContainer = document.getElementById('searchResultsContainer');
+            
+            resultsContainer.innerHTML = `
+                <div class="col-span-full flex justify-center items-center py-8">
+                    <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
+                    <span class="ml-2 text-gray-500">Searching...</span>
                 </div>
             `;
             
-            feather.replace();
-        });
-}
-</script>
+            resultsSection.classList.remove('hidden');
+            
+            fetch(`/api/animes/search?q=${encodeURIComponent(searchTerm)}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    resultsContainer.innerHTML = '';
+                    
+                    if (data.length === 0) {
+                        resultsContainer.innerHTML = `
+                            <div class="col-span-full flex flex-col items-center justify-center py-8">
+                                <i data-feather="search" class="mb-2 text-gray-400 h-10 w-10"></i>
+                                <p class="text-gray-500">No results found for "${searchTerm}"</p>
+                            </div>
+                        `;
+                    } else {
+                        data.forEach(anime => {
+                            resultsContainer.appendChild(createAnimeCard(anime));
+                        });
+                    }
+                    
+                    feather.replace();
+                    
+                    // Update URL without reloading the page
+                    const url = new URL(window.location);
+                    url.searchParams.set('search', searchTerm);
+                    window.history.pushState({}, '', url);
+                })
+                .catch(error => {
+                    console.error('Error searching animes:', error);
+                    resultsContainer.innerHTML = `
+                        <div class="col-span-full flex flex-col items-center justify-center py-8">
+                            <i data-feather="alert-circle" class="mb-2 text-red-500 h-10 w-10"></i>
+                            <p class="text-red-600">Failed to search. Please try again later.</p>
+                        </div>
+                    `;
+                    
+                    feather.replace();
+                });
+        }
+    </script>
 </body>
 </html>
