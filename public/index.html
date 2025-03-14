@@ -1,30 +1,59 @@
 <!DOCTYPE html>
-<html lang="tl">
+<html lang="tl" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Anime Tagalog</title>
+    <title>Anime Tagalog - Watch Filipino Dubbed Anime</title>
     <script src="https://unpkg.com/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8172698611544170"
+     crossorigin="anonymous"></script>
     <style>
+        :root {
+            --primary: #4f46e5;
+            --primary-dark: #4338ca;
+            --primary-light: #e0e7ff;
+        }
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: #f9fafb;
         }
+        
+        /* Theme toggle */
+        .dark {
+            color-scheme: dark;
+        }
+        
+        .dark body {
+            background-color: #111827;
+            color: #f3f4f6;
+        }
+        
         .anime-card {
-            transition: all 0.2s ease;
-            border-radius: 8px;
+            transition: all 0.3s ease;
+            border-radius: 12px;
             overflow: hidden;
             height: 100%;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
+        
+        .dark .anime-card {
+            background-color: #1f2937;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+        
         .anime-card:active {
             transform: scale(0.97);
         }
+        
         .anime-card:hover {
             box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             transform: translateY(-4px);
         }
+        
         .tabs-scroll-container {
             overflow-x: auto;
             white-space: nowrap;
@@ -34,9 +63,15 @@
             background-color: #f1f2f6;
             border-radius: 10px;
         }
+        
+        .dark .tabs-scroll-container {
+            background-color: #374151;
+        }
+        
         .tabs-scroll-container::-webkit-scrollbar {
             display: none;
         }
+        
         .tab {
             padding: 10px 30px;
             font-weight: 500;
@@ -46,10 +81,21 @@
             border-radius: 0;
             transition: all 0.2s ease;
         }
+        
+        .dark .tab {
+            color: #d1d5db;
+        }
+        
         .tab-active {
             background-color: #e8e6ff;
             color: #5046e5;
         }
+        
+        .dark .tab-active {
+            background-color: #4338ca;
+            color: #e0e7ff;
+        }
+        
         .pagination-container {
             background-color: #f1f2f6;
             border-radius: 10px;
@@ -58,6 +104,11 @@
             display: flex;
             align-items: center;
         }
+        
+        .dark .pagination-container {
+            background-color: #374151;
+        }
+        
         .pagination-button {
             width: 40px;
             height: 40px;
@@ -68,13 +119,24 @@
             border: none;
             transition: all 0.2s ease;
         }
+        
         .pagination-button:hover:not(:disabled) {
             background-color: #e0e0e0;
         }
+        
+        .dark .pagination-button:hover:not(:disabled) {
+            background-color: #4b5563;
+        }
+        
         .pagination-active {
             background-color: transparent;
             font-weight: 500;
         }
+        
+        .dark .pagination-active {
+            color: white;
+        }
+        
         .bottom-nav {
             position: fixed;
             bottom: 0;
@@ -87,6 +149,12 @@
             border-top-left-radius: 16px;
             border-top-right-radius: 16px;
         }
+        
+        .dark .bottom-nav {
+            background-color: #1f2937;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.2);
+        }
+        
         .bottom-nav-item {
             display: flex;
             flex-direction: column;
@@ -94,21 +162,38 @@
             color: #777;
             transition: color 0.2s ease;
         }
+        
+        .dark .bottom-nav-item {
+            color: #9ca3af;
+        }
+        
         .bottom-nav-item.active {
             color: #5046e5;
         }
+        
+        .dark .bottom-nav-item.active {
+            color: #818cf8;
+        }
+        
         .bottom-nav-icon {
             margin-bottom: 4px;
         }
+        
         .skeleton {
             animation: pulse 1.5s infinite;
             background-color: #eee;
             border-radius: 8px;
         }
+        
+        .dark .skeleton {
+            background-color: #2d3748;
+        }
+        
         @keyframes pulse {
             0%, 100% { opacity: 0.5; }
             50% { opacity: 0.8; }
         }
+        
         .status-dot {
             width: 8px;
             height: 8px;
@@ -117,12 +202,14 @@
             display: inline-block;
             margin-right: 6px;
         }
+        
         .anime-title {
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
             max-width: 100%;
         }
+        
         .badge {
             font-size: 10px;
             padding: 3px 8px;
@@ -132,12 +219,20 @@
             display: inline-flex;
             align-items: center;
         }
+        
+        .dark .badge {
+            background-color: #374151;
+            color: #d1d5db;
+        }
+        
         .badge-icon {
             margin-right: 3px;
         }
+        
         .search-container {
             position: relative;
         }
+        
         .search-input {
             width: 100%;
             padding: 8px 12px 8px 36px;
@@ -146,6 +241,12 @@
             background-color: #f1f2f6;
             font-size: 14px;
         }
+        
+        .dark .search-input {
+            background-color: #374151;
+            color: #e5e7eb;
+        }
+        
         .search-icon {
             position: absolute;
             left: 12px;
@@ -153,18 +254,26 @@
             transform: translateY(-50%);
             color: #777;
         }
+        
+        .dark .search-icon {
+            color: #9ca3af;
+        }
+        
         .no-scrollbar::-webkit-scrollbar {
             display: none;
         }
+        
         .no-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
         }
+        
         .poster-image {
             aspect-ratio: 2/3;
             object-fit: cover;
             width: 100%;
         }
+        
         .modal {
             position: fixed;
             z-index: 1000;
@@ -180,10 +289,12 @@
             pointer-events: none;
             transition: opacity 0.3s ease;
         }
+        
         .modal.show {
             opacity: 1;
             pointer-events: auto;
         }
+        
         .modal-content {
             background-color: white;
             border-radius: 16px;
@@ -194,9 +305,16 @@
             transform: translateY(20px);
             transition: transform 0.3s ease;
         }
+        
+        .dark .modal-content {
+            background-color: #1f2937;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+        
         .modal.show .modal-content {
             transform: translateY(0);
         }
+        
         .version-badge {
             font-size: 10px;
             padding: 2px 6px;
@@ -207,11 +325,150 @@
             align-items: center;
             margin-left: 6px;
         }
+        
+        .dark .version-badge {
+            background-color: #374151;
+            color: #818cf8;
+        }
+        
+        /* Ad containers */
+        .ad-container {
+            width: 100%;
+            margin: 1rem auto;
+            overflow: hidden;
+            text-align: center;
+            background-color: #f1f2f6;
+            border-radius: 12px;
+            padding: 10px;
+        }
+        
+        .dark .ad-container {
+            background-color: #374151;
+        }
+        
+        .ad-container-horizontal {
+            min-height: 90px;
+        }
+        
+        .ad-container-square {
+            min-height: 250px;
+        }
+        
+        .ad-label {
+            display: block;
+            text-align: center;
+            font-size: 10px;
+            color: #9ca3af;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        
+        /* Favorites feature */
+        .favorite-btn {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 50%;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            transition: all 0.2s ease;
+            z-index: 10;
+        }
+        
+        .favorite-btn:hover {
+            background-color: rgba(0, 0, 0, 0.7);
+            transform: scale(1.1);
+        }
+        
+        .favorite-btn.active {
+            color: #f59e0b;
+        }
+        
+        /* Recent releases section */
+        .section-title {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.75rem;
+            font-weight: 600;
+        }
+        
+        .section-title i {
+            margin-right: 8px;
+        }
+        
+        /* Notification Dot */
+        .notification-dot {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            width: 8px;
+            height: 8px;
+            background-color: #ef4444;
+            border-radius: 50%;
+        }
+        
+        /* Theme toggle switch */
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 24px;
+        }
+        
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #e5e7eb;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .dark .slider {
+            background-color: #4b5563;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: #4f46e5;
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(16px);
+        }
+        
         /* Improved scrolling for mobile */
         .smooth-scroll {
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
+        
         @media (max-width: 640px) {
             .tab {
                 padding: 10px 20px;
@@ -225,19 +482,30 @@
 </head>
 <body class="pb-24 smooth-scroll">
     <!-- Top Navigation -->
-    <nav class="bg-white py-4 px-4 shadow-sm sticky top-0 z-50">
+    <nav class="bg-white dark:bg-gray-900 py-4 px-4 shadow-sm sticky top-0 z-50">
         <div class="container mx-auto flex justify-between items-center">
-            <a href="index.html" class="text-xl font-bold text-indigo-600 flex items-center">
+            <a href="index.html" class="text-xl font-bold text-indigo-600 dark:text-indigo-400 flex items-center">
                 <i data-feather="play-circle" class="mr-2"></i>
                 Anime Tagalog
-                <span class="version-badge">v1.0</span>
+                <span class="version-badge">v2.0</span>
             </a>
-            <div class="flex items-center">
+            <div class="flex items-center gap-3">
                 <div class="search-container w-60 hidden md:block">
                     <i data-feather="search" class="search-icon h-4 w-4"></i>
-                    <input type="text" placeholder="Search anime..." id="searchInputDesktop" class="search-input focus:outline-none focus:bg-white focus:shadow-sm">
+                    <input type="text" placeholder="Search anime..." id="searchInputDesktop" class="search-input focus:outline-none focus:bg-white dark:focus:bg-gray-700 focus:shadow-sm">
                 </div>
-                <button id="adminButton" class="text-gray-500 hover:text-indigo-600 ml-4 focus:outline-none">
+                
+                <label class="theme-switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="slider"></span>
+                </label>
+                
+                <button id="favoritesButton" class="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 focus:outline-none relative">
+                    <i data-feather="heart" class="h-5 w-5"></i>
+                    <span class="notification-dot hidden" id="favoritesDot"></span>
+                </button>
+                
+                <button id="adminButton" class="text-gray-500 hover:text-indigo-600 dark:text-gray-400 dark:hover:text-indigo-400 ml-2 focus:outline-none">
                     <i data-feather="settings" class="h-5 w-5"></i>
                 </button>
             </div>
@@ -248,11 +516,43 @@
     <div class="md:hidden px-4 py-2">
         <div class="search-container">
             <i data-feather="search" class="search-icon h-4 w-4"></i>
-            <input type="text" placeholder="Search anime..." id="searchInputMobile" class="search-input focus:outline-none focus:bg-white focus:shadow-sm">
+            <input type="text" placeholder="Search anime..." id="searchInputMobile" class="search-input focus:outline-none focus:bg-white dark:focus:bg-gray-700 focus:shadow-sm">
         </div>
     </div>
 
-    <div class="container mx-auto px-4 mt-4">
+    <!-- Ad Banner (Top) -->
+    <div class="container mx-auto px-4 mt-3">
+        <div class="ad-container ad-container-horizontal">
+            <span class="ad-label">Advertisement</span>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8172698611544170"
+                 data-ad-slot="1234567890"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 mt-2">
+        <!-- Recent Releases Section -->
+        <section class="mb-6">
+            <h2 class="section-title text-lg text-gray-800 dark:text-gray-200">
+                <i data-feather="clock" class="h-5 w-5"></i>
+                Recent Updates
+            </h2>
+            
+            <div id="recentReleases" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <!-- Will be populated by JavaScript -->
+                <div class="skeleton h-64"></div>
+                <div class="skeleton h-64"></div>
+                <div class="skeleton h-64"></div>
+                <div class="skeleton h-64"></div>
+                <div class="skeleton h-64"></div>
+                <div class="skeleton h-64"></div>
+            </div>
+        </section>
+        
         <!-- Tabs and Pagination -->
         <div class="flex flex-wrap justify-between mb-4 gap-2">
             <!-- Category Tabs - Scrollable -->
@@ -260,6 +560,8 @@
                 <button class="tab tab-active" data-tab="newest">NEWEST</button>
                 <button class="tab" data-tab="popular">POPULAR</button>
                 <button class="tab" data-tab="top-rated">TOP RATED</button>
+                <button class="tab" data-tab="completed">COMPLETED</button>
+                <button class="tab" data-tab="ongoing">ONGOING</button>
             </div>
             
             <!-- Pagination -->
@@ -275,7 +577,7 @@
         </div>
 
         <!-- Anime Grid -->
-        <div id="animeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+        <div id="animeGrid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             <!-- Loading skeletons will be replaced with actual content -->
             <div class="skeleton h-64"></div>
             <div class="skeleton h-64"></div>
@@ -283,28 +585,81 @@
             <div class="skeleton h-64"></div>
             <div class="skeleton h-64"></div>
             <div class="skeleton h-64"></div>
-            <div class="skeleton h-64"></div>
-            <div class="skeleton h-64"></div>
-            <div class="skeleton h-64"></div>
-            <div class="skeleton h-64"></div>
-            <div class="skeleton h-64"></div>
-            <div class="skeleton h-64"></div>
         </div>
+        
+        <!-- Ad Banner (Middle) -->
+        <div class="ad-container ad-container-horizontal mt-6 mb-4">
+            <span class="ad-label">Advertisement</span>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8172698611544170"
+                 data-ad-slot="2345678901"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
+        
+        <!-- Recently Watched Section -->
+        <section id="recentlyWatchedSection" class="mt-4 hidden">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="section-title text-lg text-gray-800 dark:text-gray-200">
+                    <i data-feather="eye" class="h-5 w-5"></i>
+                    Recently Watched
+                </h2>
+                <button id="clearHistory" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 flex items-center">
+                    <i data-feather="trash-2" class="mr-1 h-4 w-4"></i> Clear
+                </button>
+            </div>
+            <div id="recentlyWatchedContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <!-- Will be populated by JavaScript -->
+            </div>
+        </section>
 
         <!-- Search Results Section (Hidden by default) -->
         <section id="searchResults" class="mt-4 hidden">
             <div class="flex justify-between items-center mb-3">
-                <h2 class="text-lg font-medium text-gray-800 flex items-center">
-                    <i data-feather="search" class="mr-2 h-4 w-4"></i> Search Results
+                <h2 class="section-title text-lg text-gray-800 dark:text-gray-200">
+                    <i data-feather="search" class="h-5 w-5"></i>
+                    Search Results
                 </h2>
-                <button id="clearSearch" class="text-sm text-indigo-600 hover:text-indigo-800 flex items-center">
+                <button id="clearSearch" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 flex items-center">
                     <i data-feather="x" class="mr-1 h-4 w-4"></i> Clear
                 </button>
             </div>
-            <div id="searchResultsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3">
+            <div id="searchResultsContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 <!-- Search results will be loaded here -->
             </div>
         </section>
+        
+        <!-- Favorites Section (Hidden by default) -->
+        <section id="favoritesSection" class="mt-4 hidden">
+            <div class="flex justify-between items-center mb-3">
+                <h2 class="section-title text-lg text-gray-800 dark:text-gray-200">
+                    <i data-feather="heart" class="h-5 w-5"></i>
+                    My Favorites
+                </h2>
+                <button id="clearFavorites" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 flex items-center">
+                    <i data-feather="trash-2" class="mr-1 h-4 w-4"></i> Clear All
+                </button>
+            </div>
+            <div id="favoritesContainer" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                <!-- Favorites will be loaded here -->
+            </div>
+        </section>
+    </div>
+    
+    <!-- Ad Banner (Bottom) -->
+    <div class="container mx-auto px-4 mt-6 mb-20">
+        <div class="ad-container ad-container-horizontal">
+            <span class="ad-label">Advertisement</span>
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-8172698611544170"
+                 data-ad-slot="3456789012"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+        </div>
     </div>
 
     <!-- Bottom Navigation Bar (Mobile) -->
@@ -318,6 +673,10 @@
                 <i data-feather="trending-up" class="bottom-nav-icon h-6 w-6"></i>
                 <span class="text-xs">Trending</span>
             </a>
+            <a href="#" class="bottom-nav-item" id="nav-favorites">
+                <i data-feather="heart" class="bottom-nav-icon h-6 w-6"></i>
+                <span class="text-xs">Favorites</span>
+            </a>
             <a href="#" class="bottom-nav-item" id="nav-schedule">
                 <i data-feather="calendar" class="bottom-nav-icon h-6 w-6"></i>
                 <span class="text-xs">Schedule</span>
@@ -329,17 +688,17 @@
     <div id="passwordModal" class="modal">
         <div class="modal-content">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-semibold text-gray-800">Admin Access</h3>
-                <button id="closeModal" class="text-gray-500 hover:text-gray-800 focus:outline-none">
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Admin Access</h3>
+                <button id="closeModal" class="text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200 focus:outline-none">
                     <i data-feather="x" class="h-5 w-5"></i>
                 </button>
             </div>
             <div class="mb-4">
-                <label for="adminPassword" class="block text-sm font-medium text-gray-700 mb-2">
+                <label for="adminPassword" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                     Enter Admin Password
                 </label>
                 <input type="password" id="adminPassword" 
-                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500" 
+                    class="w-full px-4 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" 
                     placeholder="Enter password">
             </div>
             <div class="text-right">
@@ -352,6 +711,14 @@
             </div>
         </div>
     </div>
+    
+    <!-- Notification Toast -->
+    <div id="notificationToast" class="fixed bottom-20 right-4 bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg z-50 transition-all duration-300 transform translate-y-12 opacity-0">
+        <div class="flex items-center gap-2">
+            <i data-feather="info" class="h-5 w-5"></i>
+            <span id="notificationText">Notification message</span>
+        </div>
+    </div>
 
     <script>
         // Global variables
@@ -362,15 +729,21 @@
         let trendingAnimes = [];
         let scheduleData = [];
         let itemsPerPage = 12;
+        let darkMode = localStorage.getItem('darkMode') === 'true';
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        let recentlyWatched = JSON.parse(localStorage.getItem('recentlyWatched') || '[]');
 
         // Initialize page
         document.addEventListener('DOMContentLoaded', function() {
             feather.replace();
+            initTheme();
             loadAnimes();
             loadTrending();
             loadSchedule();
             setupEventListeners();
             setupAdminAccess();
+            loadRecentReleases();
+            loadRecentlyWatched();
             
             // Check for search parameter in URL
             const urlParams = new URLSearchParams(window.location.search);
@@ -385,6 +758,17 @@
             adjustItemsPerPage();
             window.addEventListener('resize', adjustItemsPerPage);
         });
+
+        // Initialize theme
+        function initTheme() {
+            if (darkMode) {
+                document.documentElement.classList.add('dark');
+                document.getElementById('themeToggle').checked = true;
+            } else {
+                document.documentElement.classList.remove('dark');
+                document.getElementById('themeToggle').checked = false;
+            }
+        }
 
         // Set up admin access modal
         function setupAdminAccess() {
@@ -453,9 +837,9 @@
             } else if (window.innerWidth < 1024) {
                 itemsPerPage = 12; // Tablets: 4 columns x 3 rows
             } else if (window.innerWidth < 1280) {
-                itemsPerPage = 15; // Small desktops: 5 columns x 3 rows
+                itemsPerPage = 18; // Small desktops: 6 columns x 3 rows
             } else {
-                itemsPerPage = 18; // Large desktops: 6 columns x 3 rows
+                itemsPerPage = 24; // Large desktops: 6 columns x 4 rows
             }
             
             if (allAnimes.length > 0) {
@@ -474,6 +858,44 @@
                     updatePaginationDisplay();
                     renderAnimesByTab(tabName);
                 });
+            });
+            
+            // Theme toggle
+            document.getElementById('themeToggle').addEventListener('change', function() {
+                darkMode = this.checked;
+                localStorage.setItem('darkMode', darkMode);
+                if (darkMode) {
+                    document.documentElement.classList.add('dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                }
+                
+                // Reinitialize feather icons
+                feather.replace();
+            });
+            
+            // Favorites button
+            document.getElementById('favoritesButton').addEventListener('click', function() {
+                toggleFavoritesView();
+            });
+            
+            // Clear favorites button
+            document.getElementById('clearFavorites').addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear all favorites?')) {
+                    favorites = [];
+                    localStorage.setItem('favorites', JSON.stringify(favorites));
+                    document.getElementById('favoritesDot').classList.add('hidden');
+                    displayFavorites();
+                }
+            });
+            
+            // Clear history button
+            document.getElementById('clearHistory').addEventListener('click', function() {
+                if (confirm('Are you sure you want to clear your watch history?')) {
+                    recentlyWatched = [];
+                    localStorage.setItem('recentlyWatched', JSON.stringify(recentlyWatched));
+                    loadRecentlyWatched();
+                }
             });
             
             // Search input (Desktop)
@@ -501,6 +923,8 @@
                 document.getElementById('searchInputDesktop').value = '';
                 document.getElementById('searchInputMobile').value = '';
                 document.getElementById('searchResults').classList.add('hidden');
+                document.getElementById('favoritesSection').classList.add('hidden');
+                showMainContent();
                 
                 // Update URL without reloading the page
                 const url = new URL(window.location);
@@ -534,6 +958,8 @@
                 
                 // Show main content and hide other sections
                 document.getElementById('searchResults').classList.add('hidden');
+                document.getElementById('favoritesSection').classList.add('hidden');
+                showMainContent();
                 renderAnimesByTab(currentTab);
             });
             
@@ -543,6 +969,7 @@
                 
                 // Show trending content
                 document.getElementById('searchResults').classList.add('hidden');
+                document.getElementById('favoritesSection').classList.add('hidden');
                 
                 // Update tabs to show 'popular' as active
                 setActiveTab('popular');
@@ -551,15 +978,173 @@
                 displayTrendingAnimes();
             });
             
+            document.getElementById('nav-favorites').addEventListener('click', function(e) {
+                e.preventDefault();
+                setActiveBottomNav('nav-favorites');
+                
+                toggleFavoritesView();
+            });
+            
             document.getElementById('nav-schedule').addEventListener('click', function(e) {
                 e.preventDefault();
                 setActiveBottomNav('nav-schedule');
                 
                 // Show schedule content
                 document.getElementById('searchResults').classList.add('hidden');
+                document.getElementById('favoritesSection').classList.add('hidden');
                 
                 // Display schedule
                 displaySchedule();
+            });
+        }
+        
+        // Show notification toast
+        function showNotification(message, duration = 3000) {
+            const toast = document.getElementById('notificationToast');
+            document.getElementById('notificationText').textContent = message;
+            
+            toast.classList.remove('translate-y-12', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-12', 'opacity-0');
+            }, duration);
+        }
+        
+        // Toggle favorites view
+        function toggleFavoritesView() {
+            const favoritesSection = document.getElementById('favoritesSection');
+            
+            if (favoritesSection.classList.contains('hidden')) {
+                // Hide other sections
+                document.getElementById('searchResults').classList.add('hidden');
+                hideMainContent();
+                
+                // Show favorites
+                favoritesSection.classList.remove('hidden');
+                document.getElementById('favoritesDot').classList.add('hidden');
+                displayFavorites();
+            } else {
+                // Hide favorites
+                favoritesSection.classList.add('hidden');
+                showMainContent();
+            }
+        }
+        
+        // Display favorites
+        function displayFavorites() {
+            const container = document.getElementById('favoritesContainer');
+            container.innerHTML = '';
+            
+            if (favorites.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full flex flex-col items-center justify-center py-8">
+                        <i data-feather="heart" class="mb-2 text-gray-400 h-10 w-10"></i>
+                        <p class="text-gray-500 dark:text-gray-400">No favorites added yet</p>
+                    </div>
+                `;
+                feather.replace();
+                return;
+            }
+            
+            // Get full anime data for each favorite
+            const favoriteAnimes = allAnimes.filter(anime => favorites.includes(anime.id));
+            
+            // Render favorite anime cards
+            favoriteAnimes.forEach(anime => {
+                container.appendChild(createAnimeCard(anime, true));
+            });
+            
+            feather.replace();
+        }
+        
+        // Load recently watched anime
+        function loadRecentlyWatched() {
+            if (recentlyWatched.length === 0) {
+                document.getElementById('recentlyWatchedSection').classList.add('hidden');
+                return;
+            }
+            
+            // Show the section
+            document.getElementById('recentlyWatchedSection').classList.remove('hidden');
+            
+            const container = document.getElementById('recentlyWatchedContainer');
+            container.innerHTML = '';
+            
+            // Get full anime data for each recently watched
+            const watchedAnimes = allAnimes.filter(anime => recentlyWatched.includes(anime.id));
+            
+            // Reverse the array to show most recent first
+            watchedAnimes.reverse();
+            
+            // Limit to 6 items
+            const limitedWatchedAnimes = watchedAnimes.slice(0, 6);
+            
+            // Render recently watched anime cards
+            limitedWatchedAnimes.forEach(anime => {
+                container.appendChild(createAnimeCard(anime));
+            });
+            
+            feather.replace();
+        }
+        
+        // Load recent releases
+        function loadRecentReleases() {
+            fetch('/api/animes/recent')
+                .then(response => {
+                    if (!response.ok) {
+                        return []; // Return empty array on error
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const container = document.getElementById('recentReleases');
+                    container.innerHTML = '';
+                    
+                    if (!data || data.length === 0) {
+                        // Use normal anime data if recent API fails
+                        const sortedAnimes = [...allAnimes].sort((a, b) => 
+                            new Date(b.dateAdded) - new Date(a.dateAdded)
+                        );
+                        
+                        const recentAnimes = sortedAnimes.slice(0, 6);
+                        recentAnimes.forEach(anime => {
+                            container.appendChild(createAnimeCard(anime));
+                        });
+                    } else {
+                        // Use recent API data
+                        data.forEach(anime => {
+                            container.appendChild(createAnimeCard(anime, false, true));
+                        });
+                    }
+                    
+                    feather.replace();
+                })
+                .catch(error => {
+                    console.error('Error loading recent releases:', error);
+                });
+        }
+
+        // Show main content
+        function showMainContent() {
+            document.getElementById('animeGrid').classList.remove('hidden');
+            document.getElementById('recentReleases').parentElement.classList.remove('hidden');
+            document.querySelectorAll('.tabs-scroll-container, .pagination-container').forEach(el => {
+                el.parentElement.classList.remove('hidden');
+            });
+            
+            // Show recently watched if available
+            if (recentlyWatched.length > 0) {
+                document.getElementById('recentlyWatchedSection').classList.remove('hidden');
+            }
+        }
+        
+        // Hide main content
+        function hideMainContent() {
+            document.getElementById('animeGrid').classList.add('hidden');
+            document.getElementById('recentReleases').parentElement.classList.add('hidden');
+            document.getElementById('recentlyWatchedSection').classList.add('hidden');
+            document.querySelectorAll('.tabs-scroll-container, .pagination-container').forEach(el => {
+                el.parentElement.classList.add('hidden');
             });
         }
 
@@ -610,6 +1195,14 @@
                 .then(data => {
                     allAnimes = data;
                     renderAnimesByTab(currentTab);
+                    
+                    // After loading animes, update recently watched and favorites
+                    loadRecentlyWatched();
+                    
+                    // If there are favorites, show notification dot
+                    if (favorites.length > 0) {
+                        document.getElementById('favoritesDot').classList.remove('hidden');
+                    }
                 })
                 .catch(error => {
                     console.error('Error loading animes:', error);
@@ -673,6 +1266,14 @@
                 case 'top-rated':
                     displayAnimes = displayAnimes.sort((a, b) => (b.rating || 0) - (a.rating || 0));
                     break;
+                case 'completed':
+                    displayAnimes = displayAnimes.filter(anime => anime.status === 'Completed')
+                        .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                    break;
+                case 'ongoing':
+                    displayAnimes = displayAnimes.filter(anime => anime.status === 'Ongoing')
+                        .sort((a, b) => new Date(b.dateAdded) - new Date(a.dateAdded));
+                    break;
             }
             
             // Calculate total pages
@@ -697,7 +1298,7 @@
                 container.innerHTML = `
                     <div class="col-span-full flex flex-col items-center justify-center py-8">
                         <i data-feather="trending-up" class="mb-2 text-gray-400 h-10 w-10"></i>
-                        <p class="text-gray-500">No trending anime yet</p>
+                        <p class="text-gray-500 dark:text-gray-400">No trending anime yet</p>
                     </div>
                 `;
                 feather.replace();
@@ -715,7 +1316,7 @@
                 container.innerHTML = `
                     <div class="col-span-full flex flex-col items-center justify-center py-8">
                         <i data-feather="calendar" class="mb-2 text-gray-400 h-10 w-10"></i>
-                        <p class="text-gray-500">No scheduled releases yet</p>
+                        <p class="text-gray-500 dark:text-gray-400">No scheduled releases yet</p>
                     </div>
                 `;
                 feather.replace();
@@ -741,8 +1342,8 @@
                 daySection.className = 'col-span-full mb-6';
                 
                 daySection.innerHTML = `
-                    <h3 class="text-lg font-medium text-gray-800 mb-3">${day}</h3>
-                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 schedule-day">
+                    <h3 class="text-lg font-medium text-gray-800 dark:text-gray-200 mb-3">${day}</h3>
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 schedule-day">
                         ${scheduleByDay[day].map(item => {
                             const timeParts = item.releaseTime.split(':');
                             const time = new Date();
@@ -750,18 +1351,26 @@
                             const formattedTime = time.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
                             
                             return `
-                                <div class="anime-card bg-white shadow-sm relative">
+                                <div class="anime-card bg-white dark:bg-gray-800 shadow-sm relative">
                                     <a href="watch.html?id=${item.animeId}">
                                         <div class="relative">
                                             <img src="${item.anime?.poster || '/api/placeholder/180/270'}" alt="${item.anime?.title || 'Unknown'}" class="poster-image">
                                             <div class="absolute top-0 right-0 bg-indigo-600 text-white text-xs px-2 py-1 m-2 rounded">
                                                 ${formattedTime}
                                             </div>
+                                            ${favorites.includes(item.animeId) ? 
+                                                `<button class="favorite-btn active" data-id="${item.animeId}">
+                                                    <i data-feather="heart" class="h-4 w-4"></i>
+                                                </button>` : 
+                                                `<button class="favorite-btn" data-id="${item.animeId}">
+                                                    <i data-feather="heart" class="h-4 w-4"></i>
+                                                </button>`
+                                            }
                                         </div>
                                         <div class="p-2">
                                             <div class="flex items-start mb-1">
                                                 <span class="status-dot mt-1.5"></span>
-                                                <h3 class="anime-title text-sm font-medium text-gray-800">${item.anime?.title || 'Unknown'}</h3>
+                                                <h3 class="anime-title text-sm font-medium text-gray-800 dark:text-gray-200">${item.anime?.title || 'Unknown'}</h3>
                                             </div>
                                             <div class="flex flex-wrap gap-1 mt-1">
                                                 <span class="badge">${item.anime?.type || 'TV'}</span>
@@ -779,6 +1388,7 @@
             });
             
             feather.replace();
+            setupFavoriteButtons();
         }
 
         // Render anime cards to container
@@ -790,7 +1400,7 @@
                 container.innerHTML = `
                     <div class="col-span-full flex flex-col items-center justify-center py-8">
                         <i data-feather="film-off" class="mb-2 text-gray-400 h-10 w-10"></i>
-                        <p class="text-gray-500">No anime found</p>
+                        <p class="text-gray-500 dark:text-gray-400">No anime found</p>
                     </div>
                 `;
                 feather.replace();
@@ -802,12 +1412,13 @@
             });
             
             feather.replace();
+            setupFavoriteButtons();
         }
 
         // Create anime card
-        function createAnimeCard(anime) {
+        function createAnimeCard(anime, isFavorite = false, isNew = false) {
             const card = document.createElement('div');
-            card.className = 'anime-card shadow-sm bg-white relative';
+            card.className = 'anime-card shadow-sm bg-white dark:bg-gray-800 relative';
             
             const poster = anime.poster || '/api/placeholder/180/270';
             const title = anime.title || 'Unknown Title';
@@ -830,16 +1441,33 @@
             const hasAudio = anime.hasAudio !== undefined ? anime.hasAudio : true;
             const audioBadge = hasAudio ? `<span class="badge ml-1"><i data-feather="mic" class="h-3 w-3 mr-1"></i>${epDisplay}</span>` : '';
             
+            // Create favorite button
+            const favoriteBtn = favorites.includes(anime.id) ? 
+                `<button class="favorite-btn active" data-id="${anime.id}">
+                    <i data-feather="heart" class="h-4 w-4"></i>
+                </button>` : 
+                `<button class="favorite-btn" data-id="${anime.id}">
+                    <i data-feather="heart" class="h-4 w-4"></i>
+                </button>`;
+            
+            // Add "NEW" badge for new content
+            const newBadge = isNew ? 
+                `<div class="absolute top-0 left-0 bg-green-500 text-white text-xs px-2 py-1 m-2 rounded">
+                    NEW
+                </div>` : '';
+            
             card.innerHTML = `
                 <a href="watch.html?id=${anime.id}" class="block h-full">
                     <div class="relative">
                         <img src="${poster}" alt="${title}" class="poster-image">
+                        ${favoriteBtn}
+                        ${newBadge}
                     </div>
                     
                     <div class="p-2">
                         <div class="flex items-start mb-1">
                             <span class="status-dot mt-1.5"></span>
-                            <h3 class="anime-title text-sm font-medium text-gray-800">${title}</h3>
+                            <h3 class="anime-title text-sm font-medium text-gray-800 dark:text-gray-200">${title}</h3>
                         </div>
                         
                         <div class="flex flex-wrap gap-1 mt-1">
@@ -854,14 +1482,60 @@
             
             return card;
         }
+        
+        // Setup favorite buttons
+        function setupFavoriteButtons() {
+            document.querySelectorAll('.favorite-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const animeId = parseInt(this.dataset.id);
+                    toggleFavorite(animeId, this);
+                });
+            });
+        }
+        
+        // Toggle favorite status
+        function toggleFavorite(animeId, button) {
+            const index = favorites.indexOf(animeId);
+            
+            if (index === -1) {
+                // Add to favorites
+                favorites.push(animeId);
+                button.classList.add('active');
+                showNotification('Added to favorites');
+                
+                // Show notification dot on favorites button
+                document.getElementById('favoritesDot').classList.remove('hidden');
+            } else {
+                // Remove from favorites
+                favorites.splice(index, 1);
+                button.classList.remove('active');
+                showNotification('Removed from favorites');
+                
+                // If no favorites left, hide notification dot
+                if (favorites.length === 0) {
+                    document.getElementById('favoritesDot').classList.add('hidden');
+                }
+                
+                // If we're in favorites view, update the display
+                if (!document.getElementById('favoritesSection').classList.contains('hidden')) {
+                    displayFavorites();
+                }
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+        }
 
         // Show error message
         function showErrorMessage(message) {
             const container = document.getElementById('animeGrid');
             container.innerHTML = `
-                <div class="col-span-full flex flex-col items-center justify-center py-8 bg-red-50 rounded-lg">
+                <div class="col-span-full flex flex-col items-center justify-center py-8 bg-red-50 dark:bg-red-900/30 rounded-lg">
                     <i data-feather="alert-circle" class="mb-2 text-red-500 h-10 w-10"></i>
-                    <p class="text-red-600">${message}</p>
+                    <p class="text-red-600 dark:text-red-400">${message}</p>
                     <button class="mt-3 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600" onclick="loadAnimes()">
                         Retry
                     </button>
@@ -876,7 +1550,7 @@
             container.innerHTML = `
                 <div class="col-span-full flex flex-col items-center justify-center py-8">
                     <i data-feather="film-off" class="mb-2 text-gray-400 h-10 w-10"></i>
-                    <p class="text-gray-500">No anime added yet</p>
+                    <p class="text-gray-500 dark:text-gray-400">No anime added yet</p>
                 </div>
             `;
             feather.replace();
@@ -891,11 +1565,13 @@
             resultsContainer.innerHTML = `
                 <div class="col-span-full flex justify-center items-center py-8">
                     <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-indigo-500"></div>
-                    <span class="ml-2 text-gray-500">Searching...</span>
+                    <span class="ml-2 text-gray-500 dark:text-gray-400">Searching...</span>
                 </div>
             `;
             
             resultsSection.classList.remove('hidden');
+            hideMainContent();
+            document.getElementById('favoritesSection').classList.add('hidden');
             
             fetch(`/api/animes/search?q=${encodeURIComponent(searchTerm)}`)
                 .then(response => {
@@ -911,7 +1587,7 @@
                         resultsContainer.innerHTML = `
                             <div class="col-span-full flex flex-col items-center justify-center py-8">
                                 <i data-feather="search" class="mb-2 text-gray-400 h-10 w-10"></i>
-                                <p class="text-gray-500">No results found for "${searchTerm}"</p>
+                                <p class="text-gray-500 dark:text-gray-400">No results found for "${searchTerm}"</p>
                             </div>
                         `;
                     } else {
@@ -921,6 +1597,7 @@
                     }
                     
                     feather.replace();
+                    setupFavoriteButtons();
                     
                     // Update URL without reloading the page
                     const url = new URL(window.location);
@@ -932,7 +1609,7 @@
                     resultsContainer.innerHTML = `
                         <div class="col-span-full flex flex-col items-center justify-center py-8">
                             <i data-feather="alert-circle" class="mb-2 text-red-500 h-10 w-10"></i>
-                            <p class="text-red-600">Failed to search. Please try again later.</p>
+                            <p class="text-red-600 dark:text-red-400">Failed to search. Please try again later.</p>
                         </div>
                     `;
                     
